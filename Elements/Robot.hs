@@ -5,17 +5,16 @@ import Utils.Utils (filterCellsRbt, disjoin, getAdy, inList)
 import Environment.Env (ENV(carryingChld))
 import Environment.Environment
 
-bfs rbtPos [] pi visited env virtualPos = ([],virtualPos)
-bfs rbtPos (u:us) pi visited env virtualPos =
-    if not(inList virtualPos (chld env))
+bfs [] pi visited env virtualPos withChld objList = ([],virtualPos)
+bfs (u:us) pi visited env virtualPos withChld objList =
+    if not(inList virtualPos objList)
         then
-            let withChld = inList rbtPos (chld env)
-                adys_u = disjoin (getAdy u env) (visited++us) --adyacentes de u q no estan en la lista de ady por visitar ni los visitados
+            let adys_u = disjoin (getAdy u env) (visited++us) --adyacentes de u q no estan en la lista de ady por visitar ni los visitados
                 free_ady_u = filterCellsRbt emptyCellForRobot adys_u env withChld
                 new_ady = us ++ free_ady_u
                 newPi = pi++updatePi u free_ady_u
                 new_visited = visited++[u]
-            in bfs rbtPos new_ady newPi new_visited env u
+            in bfs new_ady newPi new_visited env u withChld objList
         else
             (pi,virtualPos)
 
@@ -34,11 +33,11 @@ nextStep road start final = let parent = findParent road final
 findParent (x:xs) child | child == fst x = snd x
                         | otherwise = findParent xs child
 
-getStep pos env =
+getStep pos env objList =
     let pi = updatePi pos (getAdy pos env)
         withkid = isCarryingChild pos (carryingChld env)
         free_ady_rbtPos = filterCellsRbt emptyCellForRobot (getAdy pos env) env withkid
-        pi_posKid = bfs pos free_ady_rbtPos pi [pos] env pos
+        pi_posKid = bfs free_ady_rbtPos pi [pos] env pos withkid objList
         poskid = snd pi_posKid
         newpi = fst pi_posKid
         steps = reverse (nextStep newpi pos poskid)
@@ -48,7 +47,7 @@ getStep pos env =
 
 findSteps [] nanyKind env = []
 findSteps (x:xs) (t:ts) env
-    | t==0 = getStep x env:findSteps xs ts env
+    | t==0 = getStep x env (chld env):findSteps xs ts env 
     | otherwise = []-- do limpia caca
 
 
