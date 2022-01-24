@@ -6,7 +6,7 @@ import Utils.Utils (getAdy, filterCells, randomNumbers, pickRandom, inList, remo
 import Environment.Environment (ENV, emptyCell)
 import System.Random (newStdGen)
 import Environment.Env
-    ( ENV(chld, carryingChld),
+    ( ENV(chld, carryingChld, centerPlayPen),
       ENV(obstc),
       ENV(rows),
       ENV(ENV),
@@ -33,7 +33,7 @@ findMoves (1:rest) indx  (x:xs) env totalChld =
 
 
 
-simulateMoves [] _ _ taken obsMov env = ENV (rows env) (columns env) taken obsMov (dirty env) (playpen env) (robots env) (carryingChld env)
+simulateMoves [] _ _ taken obsMov env = ENV (rows env) (columns env) (centerPlayPen env) taken obsMov (dirty env) (playpen env) (robots env) (carryingChld env)
 simulateMoves ([]:restPossMoves) (x:restOldMoves) gen taken obsMov env =
     simulateMoves restPossMoves restOldMoves gen (taken++[x]) obsMov env
 simulateMoves (x:restPossMoves) old@(o:restOldMoves) gen taken obsMov env =

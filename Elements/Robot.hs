@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
-module Elements.Robot(bfs, updatePi, nextStep, makeMoves)
+module Elements.Robot(bfs, updatePi, nextStep, getStep, isCarryingChild, detectKid)
 where
-import Utils.Utils (filterCellsRbt, disjoin, getAdy, inList)
+import Utils.Utils (filterCellsRbt, disjoin, getAdy, inList, remove)
 import Environment.Env (ENV(carryingChld))
 import Environment.Environment
 
@@ -33,41 +33,40 @@ nextStep road start final = let parent = findParent road final
 findParent (x:xs) child | child == fst x = snd x
                         | otherwise = findParent xs child
 
-getStep pos env objList =
+getStep pos env objList carrying =
     let pi = updatePi pos (getAdy pos env)
-        withkid = isCarryingChild pos (carryingChld env)
-        free_ady_rbtPos = filterCellsRbt emptyCellForRobot (getAdy pos env) env withkid
-        pi_posKid = bfs free_ady_rbtPos pi [pos] env pos withkid objList
+        free_ady_rbtPos = filterCellsRbt emptyCellForRobot (getAdy pos env) env carrying
+        pi_posKid = bfs free_ady_rbtPos pi [pos] env pos carrying objList
         poskid = snd pi_posKid
         newpi = fst pi_posKid
         steps = reverse (nextStep newpi pos poskid)
-    in if withkid && length steps > 1
+    in if carrying && length steps > 1
         then steps!!1
         else head steps
 
-findSteps [] nanyKind env = []
-findSteps (x:xs) (t:ts) env
-    | t==0 = getStep x env (chld env):findSteps xs ts env 
-    | otherwise = []-- do limpia caca
+-- findSteps [] _ _ carrying = []
+-- findSteps (x:xs) (t:ts) env carrying
+--     | t==0 = getStep x env (chld env) carrying:findSteps xs ts env 
+--     | otherwise = []-- do limpia caca
 
 
 isCarryingChild pos (x:xs) | pos == fst x = snd x
                            | otherwise = isCarryingChild pos xs
 
-makeMoves rbts typeRbt env =
-    let new_rbts_pos = findSteps rbts typeRbt env --nuevas pos de robots
-        new_rbt_with_chld = updateCarrying new_rbts_pos env -- actualiza la pos si un kid esta siendo cargado
-        carried_chld = updateCarriedChield new_rbt_with_chld --kids cargados
-        new_chld_pos = disjoin (chld env) carried_chld --se kitan los ninos cargados de la lista de kids
-    in 
-    ENV (rows env) 
-        (columns env) 
-        new_chld_pos 
-        (obstc env) 
-        (dirty env) 
-        (playpen env) 
-        new_rbts_pos 
-        new_rbt_with_chld
+-- makeMoves rbts typeRbt env =
+--     let new_rbts_pos = findSteps rbts typeRbt env --nuevas pos de robots
+--         new_rbt_with_chld = updateCarrying new_rbts_pos env -- actualiza la pos si un kid esta siendo cargado
+--         carried_chld = updateCarriedChield new_rbt_with_chld --kids cargados
+--         new_chld_pos = disjoin (chld env) carried_chld --se kitan los ninos cargados de la lista de kids
+--     in 
+--     ENV (rows env) 
+--         (columns env) 
+--         new_chld_pos 
+--         (obstc env) 
+--         (dirty env) 
+--         (playpen env) 
+--         new_rbts_pos 
+--         new_rbt_with_chld
 
 
 -- si un robot esta en la lista de los kids entonces lo toma
@@ -75,6 +74,16 @@ updateCarrying [] _ = []
 updateCarrying (x:xs) env | inList x (chld env) = (x,True):updateCarrying xs env
                           | otherwise = (x,False):updateCarrying xs env
 
+-- returns a list with the kids that need to be taken out from the chld list
 updateCarriedChield []  = []
 updateCarriedChield (x:xs) | snd x = fst x:updateCarriedChield xs
                            | otherwise = updateCarriedChield xs
+
+
+
+isDirty pos env
+    | inList pos (dirty env) = remove pos (dirty env)
+    | otherwise = dirty env
+
+
+detectKid env = not (null (chld env))

@@ -82,4 +82,3 @@ filterAdy [] _ = []
 filterAdy (x:xs) env | inMatriz x env = x:filterAdy xs env
                      | otherwise = filterAdy xs env
 
-
