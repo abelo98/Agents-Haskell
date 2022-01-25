@@ -2,7 +2,7 @@
 module Elements.Children(moveKids)
 where
 
-import Utils.Utils (getAdy, filterCells, randomNumbers, pickRandom, inList, remove, inMatriz,getDir)
+import Utils.Utils (getAdy, filterCells, randomNumbers, pickRandom, inList, remove, inMatriz,getDir, disjoin)
 import Environment.Environment (ENV, emptyCell)
 import System.Random (newStdGen)
 import Environment.Env
@@ -20,7 +20,8 @@ import Elements.Obstacle (moveObstc)
 moveKids env totalChld binaryGen natGen =
     let selectedChld = randomNumbers 2 binaryGen
         possibleMoves = findMoves selectedChld 0 (chld env) env totalChld
-        in simulateMoves possibleMoves (chld env) natGen [] (obstc env) env
+        kids_to_move = disjoin (chld env) (playpen env)
+        in simulateMoves possibleMoves kids_to_move natGen [] (obstc env) env
 
 
 findMoves :: [Int] -> Int -> [(Int, Int)] -> ENV -> Int ->[[(Int, Int)]]

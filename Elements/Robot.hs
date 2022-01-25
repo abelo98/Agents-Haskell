@@ -1,8 +1,17 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
-module Elements.Robot(bfs, updatePi, nextStep, getStep, isCarryingChild, detectKid)
+module Elements.Robot(bfs, 
+updatePi,
+nextStep, 
+getStep, 
+isCarryingChild, 
+detectKid,
+dropKid,
+updateCarrying2,
+carryKidToPlaypen)
+
 where
 import Utils.Utils (filterCellsRbt, disjoin, getAdy, inList, remove)
-import Environment.Env (ENV(carryingChld))
+import Environment.Env (ENV(carryingChld, centerPlayPen))
 import Environment.Environment
 
 bfs [] pi visited env virtualPos withChld objList = ([],virtualPos)
@@ -80,10 +89,42 @@ updateCarriedChield (x:xs) | snd x = fst x:updateCarriedChield xs
                            | otherwise = updateCarriedChield xs
 
 
-
 isDirty pos env
     | inList pos (dirty env) = remove pos (dirty env)
     | otherwise = dirty env
 
 
 detectKid env = not (null (chld env))
+
+dropKid pos env =
+    let new_playpen = remove pos (playpen env)
+        new_carryind_chld = updateCarrying2 (carryingChld env) pos
+        new_chld_pos = chld env++[pos]
+    in ENV (rows env)
+        (columns env)
+        (centerPlayPen env)
+        new_chld_pos
+        (obstc env)
+        (dirty env)
+        new_playpen
+        (robots env)
+        new_carryind_chld
+
+carryKidToPlaypen pos emptyPlace env = 
+    let next_step = getStep pos env [emptyPlace] True
+        new_rbts = remove pos (robots env)++[next_step]
+        new_carryind_chld = updateCarrying2 (carryingChld env) pos
+    in ENV (rows env)
+        (columns env)
+        (centerPlayPen env)
+        (chld env)
+        (obstc env)
+        (dirty env)
+        (playpen env)
+        new_rbts
+        new_carryind_chld 
+
+updateCarrying2 (x:xs) pos | fst x == pos = (pos,False): updateCarrying2 xs pos
+                           | otherwise = x:updateCarrying2 xs pos
+
+                        

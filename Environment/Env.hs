@@ -10,3 +10,6 @@ data ENV = ENV {rows :: Int,
                 playpen::[(Int,Int)],
                 robots::[(Int,Int)],
                 carryingChld::[((Int,Int),Bool)]} deriving (Show)
+
+
+-- TODO Hacer lista global para 1 todos los robots vean las celdas del corral tomadas
