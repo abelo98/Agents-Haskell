@@ -1,17 +1,22 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
-module Elements.Robot(bfs, 
+module Elements.Robot(bfs,
 updatePi,
-nextStep, 
-getStep, 
-isCarryingChild, 
+nextStep,
+getStep,
+isCarryingChild,
 detectKid,
 dropKid,
-updateCarrying2,
-carryKidToPlaypen)
+carryKidToPlaypen,
+moveTowardsKid,
+moveTowardsDirty,
+detectDirty,
+isDirty,
+clean
+)
 
 where
 import Utils.Utils (filterCellsRbt, disjoin, getAdy, inList, remove)
-import Environment.Env (ENV(carryingChld, centerPlayPen))
+import Environment.Env (ENV(carryingChld, centerPlayPen, playpenTaken))
 import Environment.Environment
 
 bfs [] pi visited env virtualPos withChld objList = ([],virtualPos)
@@ -88,16 +93,40 @@ updateCarriedChield []  = []
 updateCarriedChield (x:xs) | snd x = fst x:updateCarriedChield xs
                            | otherwise = updateCarriedChield xs
 
+-- returns a tuple of two list representig a new spot reserved and a playpen spot taken
+-- if the robots reaches a kid
+reachedKid pos env
+    | inList pos (chld env) =
+        let reserve_empty_spot = playpenTaken env++[head (playpen env)]
+            new_playpen = remove (head (playpen env)) (playpen env)
+        in (reserve_empty_spot,new_playpen)
+    | otherwise = (playpenTaken env,playpen env)
 
-isDirty pos env
-    | inList pos (dirty env) = remove pos (dirty env)
-    | otherwise = dirty env
+grabKid pos env | inList pos (chld env) = remove pos (chld env)
+                | otherwise = chld env
+
+isDirty pos env = inList pos (dirty env)
 
 
 detectKid env = not (null (chld env))
 
+detectDirty env = not (null (dirty env))
+
+clean pos env =
+    let new_dirty = remove pos (dirty env)
+    in ENV (rows env)
+        (columns env)
+        (centerPlayPen env)
+        (chld env)
+        (obstc env)
+        (dirty env)
+        (playpen env)
+        (robots env)
+        (carryingChld env)
+        (playpenTaken env)
+
 dropKid pos env =
-    let new_playpen = remove pos (playpen env)
+    let new_playpenTaken = playpenTaken env ++ [pos]
         new_carryind_chld = updateCarrying2 (carryingChld env) pos
         new_chld_pos = chld env++[pos]
     in ENV (rows env)
@@ -106,12 +135,14 @@ dropKid pos env =
         new_chld_pos
         (obstc env)
         (dirty env)
-        new_playpen
+        (playpen env)
         (robots env)
         new_carryind_chld
+        new_playpenTaken
 
-carryKidToPlaypen pos emptyPlace env = 
-    let next_step = getStep pos env [emptyPlace] True
+
+carryKidToPlaypen pos emptySpot env =
+    let next_step = getStep pos env [emptySpot] True
         new_rbts = remove pos (robots env)++[next_step]
         new_carryind_chld = updateCarrying2 (carryingChld env) pos
     in ENV (rows env)
@@ -122,9 +153,41 @@ carryKidToPlaypen pos emptyPlace env =
         (dirty env)
         (playpen env)
         new_rbts
-        new_carryind_chld 
+        new_carryind_chld
+        (playpenTaken env)
+
+moveTowardsKid pos objectives env =
+    let step = getStep pos env objectives False
+        new_robots = remove pos (robots env)++[step]
+        reservedSpots_playpen = reachedKid pos env
+        new_kids = grabKid pos env
+    in ENV (rows env)
+        (columns env)
+        (centerPlayPen env)
+        new_kids
+        (obstc env)
+        (dirty env)
+        (snd reservedSpots_playpen)
+        new_robots
+        (carryingChld env)
+        (fst reservedSpots_playpen)
+
+moveTowardsDirty pos objectives env =
+    let step = getStep pos env objectives False
+        new_robots = remove pos (robots env)++[step]
+        -- TODO: list with the reserved dirty
+    in ENV (rows env)
+        (columns env)
+        (centerPlayPen env)
+        (chld env)
+        (obstc env)
+        (dirty env)
+        (playpen env)
+        new_robots
+        (carryingChld env)
+        (playpenTaken env)
+
 
 updateCarrying2 (x:xs) pos | fst x == pos = (pos,False): updateCarrying2 xs pos
                            | otherwise = x:updateCarrying2 xs pos
 
-                        

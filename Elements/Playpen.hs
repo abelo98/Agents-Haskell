@@ -1,15 +1,15 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
-module Elements.Playpen(findEmptyPlace,buildPlayPen)
+module Elements.Playpen(emptyPlace,buildPlayPen)
 where
 
-import Environment.Env (centerPlayPen, ENV (playpen), chld, rows, columns)
+import Environment.Env (centerPlayPen, ENV (playpen, playpenTaken), chld, rows, columns)
 import Utils.Utils (disjoin, inList, getAdy)
 
 
-findEmptyPlace env = head (disjoin (playpen env) (chld env))
+emptyPlace env = head (disjoin (playpen env) (playpenTaken env))
 
-buildPlayPen start totalKids env = 
-    let 
+buildPlayPen start totalKids env =
+    let
         expand = expandForPlaypen start totalKids (getAdy start env) env []
         new_expantion_cell = cells2Corners expand (-1,-1) 10000 (rows env) (columns env)
     in setPriority [new_expantion_cell] expand [] env
@@ -53,9 +53,9 @@ calculateDistance pos c1 c2 c3 c4
 manhatamDist (x1,y1) (x2,y2) = abs(x1-x2) + abs(y1-y2)
 
 setPriority [] _ answ env = answ
-setPriority (u:us) currentPlaypen visited env 
+setPriority (u:us) currentPlaypen visited env
     | inList u currentPlaypen =
-        let new_ady = us ++ disjoin (getAdy u env) (visited++us) 
+        let new_ady = us ++ disjoin (getAdy u env) (visited++us)
             new_visited = visited++[u]
         in setPriority new_ady currentPlaypen new_visited env
     | otherwise = setPriority us currentPlaypen visited env

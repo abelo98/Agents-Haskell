@@ -2,17 +2,34 @@
 module Elements.Agent
 where
 
-import Elements.Robot (getStep, isCarryingChild, detectKid, dropKid, updateCarrying2, carryKidToPlaypen)
-import Environment.Env (ENV(chld, carryingChld, centerPlayPen))
-import Elements.Playpen (findEmptyPlace)
+import Elements.Robot (getStep,
+ isCarryingChild, 
+ detectKid, 
+ dropKid,
+ carryKidToPlaypen,
+ moveTowardsKid, 
+ moveTowardsDirty, 
+ detectDirty, 
+ isDirty, 
+ clean)
+
+import Environment.Env (ENV(chld, carryingChld, centerPlayPen, playpenTaken, dirty))
+import Elements.Playpen (emptyPlace)
 import Environment.Environment (ENV(playpen))
+import Utils.Utils (disjoin)
 
 
-action pos env 0
+action pos 0 env
     | isCarryingChild pos (carryingChld env) &&
-        findEmptyPlace env == pos = dropKid pos env
+        emptyPlace env == pos = dropKid pos env
     | isCarryingChild pos (carryingChld env) =
-        carryKidToPlaypen pos (findEmptyPlace env) env
-    | detectKid env = getStep pos env (chld env) False
+        carryKidToPlaypen pos (emptyPlace env) env
+    | detectKid env = moveTowardsKid pos (chld env) env 
+    | isDirty pos env = clean pos env
+    | detectDirty env = moveTowardsDirty pos (dirty env) env 
     | otherwise = env
 
+makeMoves [] _ env = env 
+makeMoves (r:rs) (t:ts) env = 
+    let new_env = action r t env 
+    in makeMoves rs ts env 

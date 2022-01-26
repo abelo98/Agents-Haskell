@@ -25,13 +25,13 @@ import Elements.Playpen(buildPlayPen)
 generateEnv rnds1 rnds2 n m chldr rbts obstcs _ =
     let start_x = head rnds1
         start_y = head rnds2
-        env = ENV n m (start_x,start_y) [] [] [] [] [] []
+        env = ENV n m (start_x,start_y) [] [] [] [] [] [] []
         playpen = buildPlayPen (start_x,start_y) chldr env
         chld = setElement chldr rnds1 rnds2 playpen []
         rbt = setElement rbts rnds1 rnds2 (chld++playpen) []
         obstc = setElement obstcs rnds1 rnds2 (chld++rbt++playpen) []
         rbtWithChild = map (\x->(x,False)) rbt
-        in ENV n m (start_x,start_y) chld obstc [] playpen rbt rbtWithChild
+        in ENV n m (start_x,start_y) chld obstc [] playpen rbt rbtWithChild []
 
 
 

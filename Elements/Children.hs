@@ -6,7 +6,7 @@ import Utils.Utils (getAdy, filterCells, randomNumbers, pickRandom, inList, remo
 import Environment.Environment (ENV, emptyCell)
 import System.Random (newStdGen)
 import Environment.Env
-    ( ENV(chld, carryingChld, centerPlayPen),
+    ( ENV(chld, carryingChld, centerPlayPen, playpenTaken),
       ENV(obstc),
       ENV(rows),
       ENV(ENV),
@@ -20,7 +20,7 @@ import Elements.Obstacle (moveObstc)
 moveKids env totalChld binaryGen natGen =
     let selectedChld = randomNumbers 2 binaryGen
         possibleMoves = findMoves selectedChld 0 (chld env) env totalChld
-        kids_to_move = disjoin (chld env) (playpen env)
+        kids_to_move = disjoin (chld env) (playpenTaken env)
         in simulateMoves possibleMoves kids_to_move natGen [] (obstc env) env
 
 
@@ -34,7 +34,16 @@ findMoves (1:rest) indx  (x:xs) env totalChld =
 
 
 
-simulateMoves [] _ _ taken obsMov env = ENV (rows env) (columns env) (centerPlayPen env) taken obsMov (dirty env) (playpen env) (robots env) (carryingChld env)
+simulateMoves [] _ _ taken obsMov env = 
+    ENV (rows env) 
+        (columns env) 
+        (centerPlayPen env) 
+        taken obsMov 
+        (dirty env) 
+        (playpen env) 
+        (robots env) 
+        (carryingChld env) 
+        (playpenTaken env)
 simulateMoves ([]:restPossMoves) (x:restOldMoves) gen taken obsMov env =
     simulateMoves restPossMoves restOldMoves gen (taken++[x]) obsMov env
 simulateMoves (x:restPossMoves) old@(o:restOldMoves) gen taken obsMov env =
