@@ -6,7 +6,7 @@ import Environment.Env (centerPlayPen, ENV (playpen, playpenTaken), chld, rows, 
 import Utils.Utils (disjoin, inList, getAdy)
 
 
-emptyPlace env = head (disjoin (playpen env) (playpenTaken env))
+emptyPlace env = head (playpen env)
 
 buildPlayPen start totalKids env =
     let

@@ -20,8 +20,7 @@ import Elements.Obstacle (moveObstc)
 moveKids env totalChld binaryGen natGen =
     let selectedChld = randomNumbers 2 binaryGen
         possibleMoves = findMoves selectedChld 0 (chld env) env totalChld
-        kids_to_move = disjoin (chld env) (playpenTaken env)
-        in simulateMoves possibleMoves kids_to_move natGen [] (obstc env) env
+        in simulateMoves possibleMoves (chld env) natGen [] (obstc env) env
 
 
 findMoves :: [Int] -> Int -> [(Int, Int)] -> ENV -> Int ->[[(Int, Int)]]

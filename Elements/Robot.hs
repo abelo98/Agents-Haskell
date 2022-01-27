@@ -97,10 +97,11 @@ updateCarriedChield (x:xs) | snd x = fst x:updateCarriedChield xs
 -- if the robots reaches a kid
 reachedKid pos env
     | inList pos (chld env) =
-        let reserve_empty_spot = playpenTaken env++[head (playpen env)]
+        let 
+            -- reserve_empty_spot = playpenTaken env++[head (playpen env)]
             new_playpen = remove (head (playpen env)) (playpen env)
-        in (reserve_empty_spot,new_playpen)
-    | otherwise = (playpenTaken env,playpen env)
+        in new_playpen
+    | otherwise = playpen env
 
 grabKid pos env | inList pos (chld env) = remove pos (chld env)
                 | otherwise = chld env
@@ -159,7 +160,7 @@ carryKidToPlaypen pos emptySpot env =
 moveTowardsKid pos objectives env =
     let step = getStep pos env objectives False
         new_robots = remove pos (robots env)++[step]
-        reservedSpots_playpen = reachedKid pos env
+        new_playpen = reachedKid pos env
         new_kids = grabKid pos env
     in ENV (rows env)
         (columns env)
@@ -167,10 +168,10 @@ moveTowardsKid pos objectives env =
         new_kids
         (obstc env)
         (dirty env)
-        (snd reservedSpots_playpen)
+        new_playpen
         new_robots
         (carryingChld env)
-        (fst reservedSpots_playpen)
+        (playpenTaken env)
 
 moveTowardsDirty pos objectives env =
     let step = getStep pos env objectives False

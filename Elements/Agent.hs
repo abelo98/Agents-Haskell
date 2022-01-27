@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
-module Elements.Agent
+module Elements.Agent(makeMoves)
 where
 
 import Elements.Robot (getStep,
@@ -17,6 +17,9 @@ import Environment.Env (ENV(chld, carryingChld, centerPlayPen, playpenTaken, dir
 import Elements.Playpen (emptyPlace)
 import Environment.Environment (ENV(playpen))
 import Utils.Utils (disjoin)
+import Environment.Env (ENV(ENV))
+import Environment.Env (ENV(rows))
+import Environment.Env
 
 
 action pos 0 env
@@ -32,4 +35,4 @@ action pos 0 env
 makeMoves [] _ env = env 
 makeMoves (r:rs) (t:ts) env = 
     let new_env = action r t env 
-    in makeMoves rs ts env 
+    in makeMoves rs ts new_env 
