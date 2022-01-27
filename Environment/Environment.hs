@@ -9,7 +9,7 @@ module Environment.Environment(
 where
 import Utils.Utils (getAdy,setElement, randomNumbers, inList, inMatriz, disjoin)
 import System.Random (newStdGen)
-import Environment.Env (ENV(ENV, rows, columns, obstc, dirty, playpen, robots, chld))
+import Environment.Env (ENV(ENV, rows, columns, obstc, dirty, playpen, robots, chld, centerPlayPen, carryingChld, playpenTaken))
 import Elements.Obstacle (canMoveObstcs)
 import Elements.Playpen(buildPlayPen)
 
@@ -22,7 +22,7 @@ import Elements.Playpen(buildPlayPen)
 -- modifyEnv (ENV n m chld obs drt plpen rbts _) l "carrying" = ENV n m chld obs drt plpen rbts l
 
 
-generateEnv rnds1 rnds2 n m chldr rbts obstcs _ =
+generateEnv rnds1 rnds2 n m chldr rbts obstcs carriedKids =
     let start_x = head rnds1
         start_y = head rnds2
         env = ENV n m (start_x,start_y) [] [] [] [] [] [] []
@@ -30,10 +30,8 @@ generateEnv rnds1 rnds2 n m chldr rbts obstcs _ =
         chld = setElement chldr rnds1 rnds2 playpen []
         rbt = setElement rbts rnds1 rnds2 (chld++playpen) []
         obstc = setElement obstcs rnds1 rnds2 (chld++rbt++playpen) []
-        rbtWithChild = map (\x->(x,False)) rbt
+        rbtWithChild = updateKidsCarried carriedKids rbt
         in ENV n m (start_x,start_y) chld obstc [] playpen rbt rbtWithChild []
-
-
 
 emptyCell :: (Int, Int) -> (Int, Int) -> ENV -> Bool
 emptyCell (p1,p2) (x, y) env
@@ -51,3 +49,6 @@ emptyCellForRobot (x, y) env withChld
       inList (x,y) (robots env)  = False
     | otherwise = True
 
+updateKidsCarried _ [] = []
+updateKidsCarried [] (r:rs) = (r,False):updateKidsCarried [] rs
+updateKidsCarried (x:xs) (r:rs) = (r,snd x):updateKidsCarried xs rs
