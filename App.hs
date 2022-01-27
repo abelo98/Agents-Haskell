@@ -10,53 +10,36 @@ import Elements.Robot (updatePi, bfs, nextStep)
 import Elements.Agent (makeMoves)
 
 
-main :: Int -> Int -> Int -> ENV -> IO ()
-main chldr rbts obstcs env = do
-    gen1 <- newStdGen
-    gen2 <- newStdGen
-    gen3 <- newStdGen
-    gen4 <- newStdGen
-
-    let
-        n = rows env
-        m = columns env
-        rnds1 = randomNumbers n gen1
-        rnds2 = randomNumbers m gen2
-        new_env = generateEnv rnds1 rnds2 n m chldr rbts obstcs (carryingChld env)
-        -- on_Test
-        new_env2 = makeMoves (robots new_env) [0,0] new_env
-        -- End On Test
-        -- in 
-        --     let envAfterKidsMove = moveKids env chldr gen3 gen4
-        --         in print(env, envAfterKidsMove)
-        in print (new_env,new_env2)
+--En el main hay q chequear condiciones de factibilidad con obstc, ninos, basura y rbts
+main :: Int -> Int -> Int -> Int -> Int -> Int -> IO ()
+main t rows columns kids rbts obstcs = 
+    startSimulation t t 0 kids rbts obstcs (newEmptyEnv rows columns rbts)
 
 
+newEmptyEnv n m rbts = ENV n m (-1,-1) [] [] [] [] [] (buildcarryingList rbts) []
 
+buildcarryingList 0 = []
+buildcarryingList rbts = False:buildcarryingList (rbts-1)
 
-newEmptyEnv n m = ENV n m (-1,-1) [] [] [] [] [] [] []
 startSimulation t counter globalCounter chldr rbts obstcs env
-    | globalCounter == t*100 = print env
-    | t == counter = do
+    | globalCounter == t*3 = print env
+    | counter == t = do
         gen1 <- newStdGen
         gen2 <- newStdGen
-        gen3 <- newStdGen
-        gen4 <- newStdGen
-
+        print "cambiar"
         let
             n = rows env
             m = columns env
             rnds1 = randomNumbers n gen1
             rnds2 = randomNumbers m gen2
             new_env = generateEnv rnds1 rnds2 n m chldr rbts obstcs (carryingChld env)
-            -- on_Test
-            -- new_env2 = makeMoves (robots new_env) [0,0] new_env
-            -- End On Test
-            -- in 
-            --     let envAfterKidsMove = moveKids env chldr gen3 gen4
-            --         in print(env, envAfterKidsMove)
-            in startSimulation t (counter+1) (globalCounter+1) chldr rbts obstcs new_env 
+            in startSimulation t 0 (globalCounter+1) chldr rbts obstcs new_env
 
-    | otherwise = 
-        let moveAgents = makeMoves (robots env) [0,0] env
-        in startSimulation t (counter+1) (globalCounter+1) chldr rbts obstcs moveAgents
+    | otherwise = do 
+                  print env 
+                  gen1 <- newStdGen
+                  gen2 <- newStdGen
+                  let   
+                    moveAgents = makeMoves (robots env) [0] 0 env
+                    envAfterKidsMove = moveKids moveAgents chldr gen1 gen2
+                    in startSimulation t (counter+1) (globalCounter+1) chldr rbts obstcs envAfterKidsMove

@@ -10,7 +10,8 @@ module Utils.Utils(
     inMatriz,
     getDir,
     disjoin,
-    filterCellsRbt
+    filterCellsRbt,
+    updateElement
 )
 
 where
@@ -82,3 +83,6 @@ filterAdy [] _ = []
 filterAdy (x:xs) env | inMatriz x env = x:filterAdy xs env
                      | otherwise = filterAdy xs env
 
+
+updateElement (x:xs) idx value | idx == 0 = value:xs
+                                | otherwise = x:updateElement xs (idx-1) value

@@ -9,7 +9,7 @@ data ENV = ENV {rows :: Int,
                 dirty::[(Int,Int)],
                 playpen::[(Int,Int)],
                 robots::[(Int,Int)],
-                carryingChld::[((Int,Int),Bool)],
+                carryingChld::[Bool],
                 playpenTaken::[(Int,Int)]
                 } deriving (Show)
 

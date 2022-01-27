@@ -22,17 +22,17 @@ import Environment.Env (ENV(rows))
 import Environment.Env
 
 
-action pos 0 env
-    | isCarryingChild pos (carryingChld env) &&
-        emptyPlace env == pos = dropKid pos env
-    | isCarryingChild pos (carryingChld env) =
+action pos 0 idx env
+    | isCarryingChild (carryingChld env) idx &&
+        emptyPlace env == pos = dropKid pos idx env
+    | isCarryingChild (carryingChld env) idx =
         carryKidToPlaypen pos (emptyPlace env) env
-    | detectKid env = moveTowardsKid pos (chld env) env 
+    | detectKid env = moveTowardsKid pos (chld env) idx env 
     | isDirty pos env = clean pos env
     | detectDirty env = moveTowardsDirty pos (dirty env) env 
     | otherwise = env
 
-makeMoves [] _ env = env 
-makeMoves (r:rs) (t:ts) env = 
-    let new_env = action r t env 
-    in makeMoves rs ts new_env 
+makeMoves [] _ _ env = env 
+makeMoves (r:rs) (t:ts) idx env = 
+    let new_env = action r t idx env 
+    in makeMoves rs ts (idx+1) new_env 

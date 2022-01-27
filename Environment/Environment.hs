@@ -22,7 +22,7 @@ import Elements.Playpen(buildPlayPen)
 -- modifyEnv (ENV n m chld obs drt plpen rbts _) l "carrying" = ENV n m chld obs drt plpen rbts l
 
 
-generateEnv rnds1 rnds2 n m chldr rbts obstcs carriedKids =
+generateEnv rnds1 rnds2 n m chldr rbts obstcs carryingKids =
     let start_x = head rnds1
         start_y = head rnds2
         env = ENV n m (start_x,start_y) [] [] [] [] [] [] []
@@ -30,8 +30,7 @@ generateEnv rnds1 rnds2 n m chldr rbts obstcs carriedKids =
         chld = setElement chldr rnds1 rnds2 playpen []
         rbt = setElement rbts rnds1 rnds2 (chld++playpen) []
         obstc = setElement obstcs rnds1 rnds2 (chld++rbt++playpen) []
-        rbtWithChild = updateKidsCarried carriedKids rbt
-        in ENV n m (start_x,start_y) chld obstc [] playpen rbt rbtWithChild []
+        in ENV n m (start_x,start_y) chld obstc [] playpen rbt carryingKids []
 
 emptyCell :: (Int, Int) -> (Int, Int) -> ENV -> Bool
 emptyCell (p1,p2) (x, y) env
@@ -49,6 +48,6 @@ emptyCellForRobot (x, y) env withChld
       inList (x,y) (robots env)  = False
     | otherwise = True
 
-updateKidsCarried _ [] = []
-updateKidsCarried [] (r:rs) = (r,False):updateKidsCarried [] rs
-updateKidsCarried (x:xs) (r:rs) = (r,snd x):updateKidsCarried xs rs
+-- updateKidsCarried _ [] = []
+-- updateKidsCarried [] (r:rs) = False:updateKidsCarried [] rs
+-- updateKidsCarried (x:xs) (r:rs) = x:updateKidsCarried xs rs
