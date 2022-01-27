@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 -- import System.Random(newStdGen)
 module App
 where
@@ -34,6 +35,28 @@ main chldr rbts obstcs env = do
 
 
 newEmptyEnv n m = ENV n m (-1,-1) [] [] [] [] [] [] []
+startSimulation t counter globalCounter chldr rbts obstcs env
+    | globalCounter == t*100 = print env
+    | t == counter = do
+        gen1 <- newStdGen
+        gen2 <- newStdGen
+        gen3 <- newStdGen
+        gen4 <- newStdGen
 
+        let
+            n = rows env
+            m = columns env
+            rnds1 = randomNumbers n gen1
+            rnds2 = randomNumbers m gen2
+            new_env = generateEnv rnds1 rnds2 n m chldr rbts obstcs (carryingChld env)
+            -- on_Test
+            -- new_env2 = makeMoves (robots new_env) [0,0] new_env
+            -- End On Test
+            -- in 
+            --     let envAfterKidsMove = moveKids env chldr gen3 gen4
+            --         in print(env, envAfterKidsMove)
+            in startSimulation t (counter+1) (globalCounter+1) chldr rbts obstcs new_env 
 
-
+    | otherwise = 
+        let moveAgents = makeMoves (robots env) [0,0] env
+        in startSimulation t (counter+1) (globalCounter+1) chldr rbts obstcs moveAgents
