@@ -32,6 +32,10 @@ action pos 0 idx env
     | detectDirty env = moveTowardsDirty pos (dirty env) env 
     | otherwise = env
 
+action2 pos 0 idx env
+    | detectKid env = moveTowardsKid pos (chld env) idx env 
+    | otherwise = env
+
 makeMoves [] _ _ env = env 
 makeMoves (r:rs) (t:ts) idx env = 
     let new_env = action r t idx env 
