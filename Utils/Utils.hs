@@ -43,14 +43,12 @@ getAdy (x,y) = filterAdy [(x-1,y),(x-1,y+1),
               (x,y-1),(x-1,y-1)]
 
 
-setElement :: Int -> [Int] -> [Int] -> [(Int,Int)] -> [(Int,Int)] -> [(Int,Int)]
-setElement 0 _ _ l r = r
-setElement n (x:xs) (y:ys) occupated answ
-    | inList (x,y) occupated = setElement n xs ys occupated answ
-    | otherwise =
-    let ret = answ++[(x,y)]
-        newElementSet = occupated++[(x,y)]
-        in setElement (n-1) xs ys newElementSet ret
+setElement :: Int -> [Int] -> [Int] -> [(Int,Int)] -> [(Int,Int)]
+setElement 0 _ _ l  = []
+setElement n (x:xs) (y:ys) occupated
+    | inList (x,y) occupated = setElement n xs ys occupated
+    | otherwise = (x,y):setElement (n-1) xs ys (occupated++[(x,y)])
+        
 
 
 filterCells _ [] env (p1,p2) = []

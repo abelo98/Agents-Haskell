@@ -119,7 +119,7 @@ clean pos env =
         (centerPlayPen env)
         (chld env)
         (obstc env)
-        (dirty env)
+        new_dirty
         (playpen env)
         (robots env)
         (carryingChld env)

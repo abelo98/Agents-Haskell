@@ -11,16 +11,15 @@ import Elements.Agent (makeMoves)
 
 
 --En el main hay q chequear condiciones de factibilidad con obstc, ninos, basura y rbts
-main :: Int -> Int -> Int -> Int -> Int -> Int -> IO ()
-main t rows columns kids rbts obstcs = do 
+main :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
+main t rows columns kids rbts obstcs dirty = do 
     gen1 <- newStdGen
     gen2 <- newStdGen
     let
         rnds1 = randomNumbers rows gen1
         rnds2 = randomNumbers columns gen2
-        new_env = generateEnv rnds1 rnds2 rows columns kids rbts obstcs [False]
+        new_env = generateEnv rnds1 rnds2 rows columns kids rbts obstcs dirty [False]
         in startSimulation t t 0 kids rbts obstcs new_env --(newEmptyEnv rows columns rbts)
-
 
 
 newEmptyEnv n m rbts = ENV n m (-1,-1) [] [] [] [] [] (buildcarryingList rbts) []
