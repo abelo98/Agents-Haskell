@@ -28,7 +28,7 @@ buildcarryingList 0 = []
 buildcarryingList rbts = False:buildcarryingList (rbts-1)
 
 startSimulation t counter globalCounter chldr rbts obstcs env
-    | globalCounter == t*5 = print env
+    | globalCounter == t*6 = print env
     --  counter == t = do
     --     gen1 <- newStdGen
     --     gen2 <- newStdGen
