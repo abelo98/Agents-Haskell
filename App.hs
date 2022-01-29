@@ -22,6 +22,7 @@ main t rows columns kids rbts obstcs = do
         in startSimulation t t 0 kids rbts obstcs new_env --(newEmptyEnv rows columns rbts)
 
 
+
 newEmptyEnv n m rbts = ENV n m (-1,-1) [] [] [] [] [] (buildcarryingList rbts) []
 
 buildcarryingList 0 = []
