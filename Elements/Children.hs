@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
-module Elements.Children(moveKids)
+module Elements.Children(moveKids,carriedKids)
 where
 
 import Utils.Utils (getAdy, filterCells, randomNumbers, pickRandom, inList, remove, inMatriz,getDir, disjoin)
@@ -17,9 +17,9 @@ import Environment.Env
 import Elements.Obstacle (moveObstc)
 
 
-moveKids env totalChld binaryGen natGen =
+moveKids env binaryGen natGen =
     let selectedChld = randomNumbers 2 binaryGen
-        possibleMoves = findMoves selectedChld 0 (chld env) env totalChld
+        possibleMoves = findMoves selectedChld 0 (chld env) env (length (chld env))
         in simulateMoves possibleMoves (chld env) natGen [] (obstc env) env
 
 
@@ -33,15 +33,15 @@ findMoves (1:rest) indx  (x:xs) env totalChld =
 
 
 
-simulateMoves [] _ _ taken obsMov env = 
-    ENV (rows env) 
-        (columns env) 
-        (centerPlayPen env) 
-        taken obsMov 
-        (dirty env) 
-        (playpen env) 
-        (robots env) 
-        (carryingChld env) 
+simulateMoves [] _ _ taken obsMov env =
+    ENV (rows env)
+        (columns env)
+        (centerPlayPen env)
+        taken obsMov
+        (dirty env)
+        (playpen env)
+        (robots env)
+        (carryingChld env)
         (playpenTaken env)
 simulateMoves ([]:restPossMoves) (x:restOldMoves) gen taken obsMov env =
     simulateMoves restPossMoves restOldMoves gen (taken++[x]) obsMov env
@@ -57,4 +57,6 @@ simulateMoves (x:restPossMoves) old@(o:restOldMoves) gen taken obsMov env =
                         simulateMoves restPossMoves restOldMoves gen (taken++[pos]) obsMov env
             else
                 let deletedPos = remove pos x
-                in simulateMoves ([deletedPos]++restPossMoves) old gen taken obsMov env
+                in simulateMoves (deletedPos : restPossMoves) old gen taken obsMov env
+
+carriedKids = length . filter id

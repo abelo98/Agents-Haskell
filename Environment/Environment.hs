@@ -22,12 +22,12 @@ import Elements.Playpen(buildPlayPen)
 -- modifyEnv (ENV n m chld obs drt plpen rbts _) l "carrying" = ENV n m chld obs drt plpen rbts l
 
 
-generateEnv rnds1 rnds2 n m chldr rbts obstcs drty carryingKids =
+generateEnv rnds1 rnds2 n m kids playpen_size rbts obstcs drty carryingKids =
     let start_x = head rnds1
         start_y = head rnds2
         env = ENV n m (start_x,start_y) [] [] [] [] [] [] []
-        playpen = buildPlayPen (start_x,start_y) chldr env
-        chld = setElement chldr rnds1 rnds2 playpen 
+        playpen = buildPlayPen (start_x,start_y) playpen_size env
+        chld = setElement kids rnds1 rnds2 playpen 
         rbt = setElement rbts rnds1 rnds2 (chld++playpen) 
         obstc = setElement obstcs rnds1 rnds2 (chld++rbt++playpen) 
         dirty = setElement drty rnds1 rnds2 (chld++rbt++playpen++obstc)
