@@ -4,7 +4,8 @@ module Environment.Environment(
     ENV(..),
     generateEnv,
     emptyCell,
-    emptyCellForRobot)
+    emptyCellForRobot,
+    countKids)
 
 where
 import Utils.Utils (getAdy,setElement, randomNumbers, inList, inMatriz, disjoin)
@@ -42,13 +43,14 @@ emptyCell (p1,p2) (x, y) env
     | otherwise = True
 
 emptyCellForRobot :: (Int, Int) -> ENV -> Bool -> Bool
-emptyCellForRobot (x, y) env withChld
-    | withChld && inList (x,y) (chld env) ||
-      inList (x,y) (obstc env) ||
-      inList (x,y) (playpen env) &&  inList (x,y) (chld env) ||
-      inList (x,y) (robots env)  = False
+emptyCellForRobot pos env withChld
+    | withChld && inList pos (chld env) ||
+      inList pos (obstc env) ||
+      inList pos (playpen env) &&  inList pos (chld env) ||
+      inList pos (robots env)  = False
     | otherwise = True
 
--- updateKidsCarried _ [] = []
--- updateKidsCarried [] (r:rs) = False:updateKidsCarried [] rs
--- updateKidsCarried (x:xs) (r:rs) = x:updateKidsCarried xs rs
+countKids [] _= 0
+countKids (x:xs) env 
+  | inList x (chld env) = 1 + countKids xs env
+  | otherwise = countKids xs env

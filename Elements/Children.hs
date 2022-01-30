@@ -3,7 +3,7 @@ module Elements.Children(moveKids,carriedKids)
 where
 
 import Utils.Utils (getAdy, filterCells, randomNumbers, pickRandom, inList, remove, inMatriz,getDir, disjoin)
-import Environment.Environment (ENV, emptyCell)
+import Environment.Environment (ENV, emptyCell, countKids)
 import System.Random (newStdGen)
 import Environment.Env
     ( ENV(chld, carryingChld, centerPlayPen, playpenTaken),
@@ -15,12 +15,14 @@ import Environment.Env
       ENV(playpen),
       ENV(robots) )
 import Elements.Obstacle (moveObstc)
+import Elements.Dirt
+import System.Process (CreateProcess(env))
 
 
-moveKids env binaryGen natGen =
-    let selectedChld = randomNumbers 2 binaryGen
+moveKids env binaryGen natGen genToPick genToMess =
+    let selectedChld = randomNumbers 2 natGen
         possibleMoves = findMoves selectedChld 0 (chld env) env (length (chld env))
-        in simulateMoves possibleMoves (chld env) natGen [] (obstc env) env
+        in simulateMoves possibleMoves (chld env) natGen genToPick genToMess [] (obstc env) [] env
 
 
 findMoves :: [Int] -> Int -> [(Int, Int)] -> ENV -> Int ->[[(Int, Int)]]
@@ -31,32 +33,37 @@ findMoves (1:rest) indx  (x:xs) env totalChld =
     findMoves rest (indx+1) xs env (totalChld-1)
 
 
+scanKids :: (Int, Int) -> ENV -> Int
+scanKids pos env = countKids (getAdy pos env) env
 
-
-simulateMoves [] _ _ taken obsMov env =
+simulateMoves [] _ _ _ _ taken obsMov newDirt env =
     ENV (rows env)
         (columns env)
         (centerPlayPen env)
-        taken obsMov
-        (dirty env)
+        taken
+        obsMov
+        (dirty env ++ newDirt)
         (playpen env)
         (robots env)
         (carryingChld env)
         (playpenTaken env)
-simulateMoves ([]:restPossMoves) (x:restOldMoves) gen taken obsMov env =
-    simulateMoves restPossMoves restOldMoves gen (taken++[x]) obsMov env
-simulateMoves (x:restPossMoves) old@(o:restOldMoves) gen taken obsMov env =
-     let pos = pickRandom x gen
+
+simulateMoves ([]:restPossMoves) (x:restOldMoves) gen1 gen2 gen3 taken obsMov newDirt env =
+    simulateMoves restPossMoves restOldMoves gen1 gen2 gen3 (taken++[x]) obsMov newDirt env
+
+simulateMoves (x:restPossMoves) old@(o:restOldMoves) gen1 gen2 gen3 taken obsMov newDirt env =
+     let pos = head (pickRandom x 1 gen1)
         in if not(inList pos taken) && not(inList pos restOldMoves)
             then
-                if inList pos (obstc env)
+                let make_a_mess = generateDirt (scanKids o env) (remove pos x) gen2 gen3
+                in if inList pos (obstc env)
                     then
                     let newObstc = moveObstc pos (getDir pos o) (obstc env)
-                    in simulateMoves restPossMoves restOldMoves gen (taken++[pos]) newObstc env
+                    in simulateMoves restPossMoves restOldMoves gen1 gen2 gen3 (taken++[pos]) newObstc make_a_mess env
                     else
-                        simulateMoves restPossMoves restOldMoves gen (taken++[pos]) obsMov env
+                        simulateMoves restPossMoves restOldMoves gen1 gen2 gen3 (taken++[pos]) obsMov make_a_mess env
             else
                 let deletedPos = remove pos x
-                in simulateMoves (deletedPos : restPossMoves) old gen taken obsMov env
+                in simulateMoves (deletedPos : restPossMoves) old gen1 gen2 gen3 taken obsMov newDirt env
 
 carriedKids = length . filter id

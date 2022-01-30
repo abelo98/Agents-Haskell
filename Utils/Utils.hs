@@ -61,8 +61,11 @@ filterCellsRbt f2 (x:xs) env withChld
     | f2  x env withChld = x:filterCellsRbt f2 xs env withChld
     | otherwise = filterCellsRbt f2 xs env withChld
 
-pickRandom l gen = let i = head (randomNumbers (length l) gen)
-                    in l!!i
+pickRandom [] _ _ = []
+pickRandom l 0 gen = []
+pickRandom l n gen = let i = head (randomNumbers (length l) gen)
+                         x = l!!i
+                    in x:pickRandom (remove x l) (n-1) gen
 
 remove x [] = []
 remove x (e:es) |  x == e = remove x es
