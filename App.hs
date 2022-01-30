@@ -11,23 +11,24 @@ import Elements.Agent (makeMoves)
 
 
 --En el main hay q chequear condiciones de factibilidad con obstc, ninos, basura y rbts
-main :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
-main t rows columns kids rbts obstcs dirty = do
+main :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
+main t rows columns kids rbts obstcs dirty rbtType = do
     gen1 <- newStdGen
     gen2 <- newStdGen
     let
         rnds1 = randomNumbers rows gen1
         rnds2 = randomNumbers columns gen2
-        new_env = generateEnv rnds1 rnds2 rows columns kids kids rbts obstcs dirty [False]
-        in startSimulation t t 0 kids rbts obstcs dirty new_env --(newEmptyEnv rows columns rbts)
+        new_env = generateEnv rnds1 rnds2 rows columns kids kids rbts obstcs dirty (buildList rbts False)
+        rbts_types = buildList rbts rbtType
+        in startSimulation t t 0 kids rbts obstcs dirty rbts_types new_env --(newEmptyEnv rows columns rbts)
 
 
-newEmptyEnv n m rbts = ENV n m (-1,-1) [] [] [] [] [] (buildcarryingList rbts) []
+newEmptyEnv n m rbts = ENV n m (-1,-1) [] [] [] [] [] (buildList rbts False) []
 
-buildcarryingList 0 = []
-buildcarryingList rbts = False:buildcarryingList (rbts-1)
+buildList 0 _ = []
+buildList rbts value = value:buildList (rbts-1) value
 
-startSimulation t counter globalCounter kids rbts obstcs dirt env
+startSimulation t counter globalCounter kids rbts obstcs dirt rbtType env
     | globalCounter == t*6 = print env
     --  counter == t = do
     --     gen1 <- newStdGen
@@ -47,12 +48,13 @@ startSimulation t counter globalCounter kids rbts obstcs dirt env
     | otherwise = do
         gen1 <- newStdGen
         gen2 <- newStdGen
-        gen3 <- newStdGen 
-        gen4 <- newStdGen 
+        gen3 <- newStdGen
+        gen4 <- newStdGen
         print env
+        print rbtType
         let
-            -- moveAgents = makeMoves (robots env) [0] 0 env
+            moveAgents = makeMoves (robots env) rbtType 0 env
             -- in print moveAgents
-            envAfterKidsMove = moveKids env gen1 gen2 gen3 gen4
+            envAfterKidsMove = moveKids moveAgents gen1 gen2 gen3 gen4
             total_dirt = length (dirty env)
-            in startSimulation t (counter+1) (globalCounter+1) kids rbts obstcs total_dirt envAfterKidsMove
+            in startSimulation t (counter+1) (globalCounter+1) kids rbts obstcs total_dirt rbtType envAfterKidsMove
