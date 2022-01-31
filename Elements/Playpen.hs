@@ -2,7 +2,7 @@
 module Elements.Playpen(emptyPlace,buildPlayPen)
 where
 
-import Environment.Env (centerPlayPen, ENV (playpen, playpenTaken), chld, rows, columns)
+import Environment.Env (ENV (playpen, playpenTaken), chld, rows, columns)
 import Utils.Utils (disjoin, inList, getAdy)
 
 

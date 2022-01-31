@@ -6,7 +6,7 @@ import Utils.Utils (getAdy, filterCells, randomNumbers, pickRandom, inList, remo
 import Environment.Environment (ENV, emptyCell, countKids)
 import System.Random (newStdGen)
 import Environment.Env
-    ( ENV(chld, carryingChld, centerPlayPen, playpenTaken),
+    ( ENV(chld, carryingChld, playpenTaken, monitor),
       ENV(obstc),
       ENV(rows),
       ENV(ENV),
@@ -39,7 +39,7 @@ scanKids pos env = countKids (getAdy pos env) env
 simulateMoves [] _ _ _ _ taken obsMov newDirt env =
     ENV (rows env)
         (columns env)
-        (centerPlayPen env)
+        (monitor env)
         taken
         obsMov
         (dirty env ++ newDirt)
@@ -55,7 +55,8 @@ simulateMoves (x:restPossMoves) old@(o:restOldMoves) gen1 gen2 gen3 taken obsMov
      let pos = head (pickRandom x 1 gen1)
         in if not(inList pos taken) && not(inList pos restOldMoves)
             then
-                let make_a_mess = generateDirt (scanKids o env) (remove pos x) gen2 gen3
+                let poss_dirty_cells = disjoin (remove pos x) (obstc env)
+                    make_a_mess = generateDirt (scanKids o env) poss_dirty_cells gen2 gen3
                 in if inList pos (obstc env)
                     then
                     let newObstc = moveObstc pos (getDir pos o) (obstc env)

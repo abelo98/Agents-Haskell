@@ -3,7 +3,7 @@ where
 
 data ENV = ENV {rows :: Int, 
                 columns :: Int,
-                centerPlayPen :: (Int,Int),
+                monitor :: (Int,Int),
                 chld::[(Int,Int)],
                 obstc::[(Int,Int)],
                 dirty::[(Int,Int)],

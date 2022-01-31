@@ -8,6 +8,7 @@ import System.Random (newStdGen)
 import Elements.Children (moveKids, carriedKids)
 import Elements.Robot (updatePi, bfs, nextStep)
 import Elements.Agent (makeMoves)
+import Environment.Statistics (calculateDirtPercent)
 
 
 --En el main hay q chequear condiciones de factibilidad con obstc, ninos, basura y rbts
@@ -23,13 +24,13 @@ main t rows columns kids rbts obstcs dirty rbtType = do
         in startSimulation t t 0 kids rbts obstcs dirty rbts_types new_env --(newEmptyEnv rows columns rbts)
 
 
-newEmptyEnv n m rbts = ENV n m (-1,-1) [] [] [] [] [] (buildList rbts False) []
+newEmptyEnv n m rbts = ENV n m (-6,-6) [] [] [] [] [] (buildList rbts False) []
 
 buildList 0 _ = []
 buildList rbts value = value:buildList (rbts-1) value
 
 startSimulation t counter globalCounter kids rbts obstcs dirt rbtType env
-    | globalCounter == t*6 = print env
+    | globalCounter == t*6 = print (calculateDirtPercent env)
     --  counter == t = do
     --     gen1 <- newStdGen
     --     gen2 <- newStdGen
@@ -56,5 +57,5 @@ startSimulation t counter globalCounter kids rbts obstcs dirt rbtType env
             moveAgents = makeMoves (robots env) rbtType 0 env
             -- in print moveAgents
             envAfterKidsMove = moveKids moveAgents gen1 gen2 gen3 gen4
-            total_dirt = length (dirty env)
+            total_dirt = length (dirty envAfterKidsMove)
             in startSimulation t (counter+1) (globalCounter+1) kids rbts obstcs total_dirt rbtType envAfterKidsMove

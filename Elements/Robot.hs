@@ -16,22 +16,50 @@ clean
 
 where
 import Utils.Utils (filterCellsRbt, disjoin, getAdy, inList, remove, updateElement)
-import Environment.Env (ENV(carryingChld, centerPlayPen, playpenTaken))
+import Environment.Env (ENV(carryingChld, playpenTaken))
 import Environment.Environment
-import GHC.Exts.Heap (GenClosure(value))
 
-bfs [] pi visited env virtualPos withChld objList = ([],virtualPos)
-bfs (u:us) pi visited env virtualPos withChld objList =
-    if not(inList virtualPos objList)
+-- newEmptyEnv2 n m rbts = ENV n m (-6,-6) [(0,0)] [] [] [] [] (buildList rbts False) []
+-- buildList 0 _ = []
+-- buildList rbts value = value:buildList (rbts-1) value
+
+bfs [] pi visited env withChld objList = ([],(-1,-1))
+bfs (u:us) pi visited env withChld objList =
+    if not(inList u objList)
         then
             let adys_u = disjoin (getAdy u env) (visited++us) --adyacentes de u q no estan en la lista de ady por visitar ni los visitados
                 free_ady_u = filterCellsRbt emptyCellForRobot adys_u env withChld
                 new_ady = us ++ free_ady_u
                 newPi = pi++updatePi u free_ady_u
                 new_visited = visited++[u]
-            in bfs new_ady newPi new_visited env u withChld objList
+            in bfs new_ady newPi new_visited env withChld objList
         else
-            (pi,virtualPos)
+            (pi,u)
+
+
+-- bfs2 [] pi visited env virtualPos withChld objList = print "Vacio"
+-- bfs2 (u:us) pi visited env virtualPos withChld objList = do
+--     print virtualPos
+--     if not(inList u objList)
+--         then
+--             let adys_u = disjoin (getAdy u env) (visited++us) --adyacentes de u q no estan en la lista de ady por visitar ni los visitados
+--                 free_ady_u = filterCellsRbt emptyCellForRobot adys_u env withChld
+--                 new_ady = us ++ free_ady_u
+--                 newPi = pi++updatePi u free_ady_u
+--                 new_visited = visited++[u]
+--             in bfs2 new_ady newPi new_visited env u withChld objList
+--         else
+--             print visited
+-- test = 
+--      let free_ady_rbtPos = filterCellsRbt emptyCellForRobot (getAdy (0,4) (newEmptyEnv2 5 5 1)) (newEmptyEnv2 5 5 1) False
+--          pi = updatePi (0,4) free_ady_rbtPos
+--          pi_posKid = bfs2 free_ady_rbtPos pi [(0,4)] (newEmptyEnv2 5 5 1) (0,4) False [(0,0)]
+--         --  poskid = snd pi_posKid
+--         --  newpi = fst pi_posKid
+         
+--         in free_ady_rbtPos
+-- test2 = 
+--  bfs2 [(1,4),(1,3),(0,3)] [((0,3),(0,4)),((1,3),(0,4)),((1,4),(0,4))] [(0,4)] (newEmptyEnv2 5 5 1) (0,4) False [(0,0)]
 
 -- father of x(ady to u) is u
 updatePi :: b -> [a] -> [(a, b)]
@@ -49,9 +77,9 @@ findParent (x:xs) child | child == fst x = snd x
                         | otherwise = findParent xs child
 
 getStep pos env objList carrying =
-    let pi = updatePi pos (getAdy pos env)
-        free_ady_rbtPos = filterCellsRbt emptyCellForRobot (getAdy pos env) env carrying
-        pi_posKid = bfs free_ady_rbtPos pi [pos] env pos carrying objList
+    let free_ady_rbtPos = filterCellsRbt emptyCellForRobot (getAdy pos env) env carrying
+        pi = updatePi pos free_ady_rbtPos
+        pi_posKid = bfs free_ady_rbtPos pi [pos] env carrying objList
         poskid = snd pi_posKid
         newpi = fst pi_posKid
         steps = reverse (nextStep newpi pos poskid)
@@ -75,7 +103,7 @@ clean pos env =
     let new_dirty = remove pos (dirty env)
     in ENV (rows env)
         (columns env)
-        (centerPlayPen env)
+        (-2,-2)
         (chld env)
         (obstc env)
         new_dirty
@@ -91,7 +119,7 @@ dropKid pos idx env =
         new_playpen = remove (head (playpen env)) (playpen env)
     in ENV (rows env)
         (columns env)
-        (centerPlayPen env)
+        (-1,-1)
         (chld env) --new_chld_pos
         (obstc env)
         (dirty env)
@@ -106,7 +134,7 @@ carryKidToPlaypen pos emptySpot env =
         new_rbts = remove pos (robots env)++[next_step]--se puede cambia por updateElement
     in ENV (rows env)
         (columns env)
-        (centerPlayPen env)
+        next_step
         (chld env)
         (obstc env)
         (dirty env)
@@ -121,7 +149,7 @@ moveTowardsKid pos objectives idx env =
         new_robots = remove pos (robots env)++[step]
         in ENV (rows env)
             (columns env)
-            (centerPlayPen env)
+            step
             (fst new_kids_new_carrying)
             (obstc env)
             (dirty env)
@@ -136,7 +164,7 @@ moveTowardsDirty pos objectives idx env =
         new_robots = remove pos (robots env)++[step]
     in ENV (rows env)
         (columns env)
-        (centerPlayPen env)
+        step
         (fst new_kids_new_carrying)
         (obstc env)
         (dirty env)
