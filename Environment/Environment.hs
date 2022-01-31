@@ -5,7 +5,8 @@ module Environment.Environment(
     generateEnv,
     emptyCell,
     emptyCellForRobot,
-    countKids)
+    countKids,
+    finalState)
 
 where
 import Utils.Utils (getAdy,setElement, randomNumbers, inList, inMatriz, disjoin)

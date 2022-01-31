@@ -3,7 +3,7 @@
 module App
 where
 import Utils.Utils(randomNumbers, getAdy, filterCellsRbt)
-import Environment.Environment (generateEnv, ENV (robots, ENV, carryingChld, rows, columns, dirty, chld), emptyCellForRobot)
+import Environment.Environment (generateEnv, ENV (robots, ENV, carryingChld, rows, columns, dirty, chld), emptyCellForRobot, finalState)
 import System.Random (newStdGen)
 import Elements.Children (moveKids, carriedKids)
 import Elements.Robot (updatePi, bfs, nextStep)
@@ -30,6 +30,7 @@ buildList 0 _ = []
 buildList rbts value = value:buildList (rbts-1) value
 
 startSimulation t counter globalCounter kids rbts obstcs dirt rbtType env
+    | finalState env && globalCounter /= 0 = print ("final",env)
     | globalCounter == t*6 = print (env, calculateDirtPercent env)
     | counter == t = do
         gen1 <- newStdGen
@@ -55,7 +56,11 @@ startSimulation t counter globalCounter kids rbts obstcs dirt rbtType env
         print rbtType
         let
             moveAgents = makeMoves (robots env) rbtType 0 env
-            -- in print moveAgents
             envAfterKidsMove = moveKids moveAgents gen1 gen2 gen3 gen4
             total_dirt = length (dirty envAfterKidsMove)
-            in startSimulation t (counter+1) (globalCounter+1) kids rbts obstcs total_dirt rbtType envAfterKidsMove
+
+         in if t == counter+1
+            then startSimulation t (counter+1) globalCounter kids rbts obstcs total_dirt rbtType envAfterKidsMove
+            else startSimulation t (counter+1) (globalCounter+1) kids rbts obstcs total_dirt rbtType envAfterKidsMove
+
+
