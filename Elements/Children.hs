@@ -6,7 +6,7 @@ import Utils.Utils (getAdy, filterCells, randomNumbers, pickRandom, inList, remo
 import Environment.Environment (ENV, emptyCell, countKids)
 import System.Random (newStdGen)
 import Environment.Env
-    ( ENV(chld, carryingChld, playpenTaken, monitor),
+    ( ENV(chld, carryingChld, playpenTaken),
       ENV(obstc),
       ENV(rows),
       ENV(ENV),
@@ -39,7 +39,6 @@ scanKids pos env = countKids (getAdy pos env) env
 simulateMoves [] _ _ _ _ taken obsMov newDirt env =
     ENV (rows env)
         (columns env)
-        (monitor env)
         taken
         obsMov
         (dirty env ++ newDirt)

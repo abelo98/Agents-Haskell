@@ -18,13 +18,13 @@ import Elements.Playpen(buildPlayPen)
 generateEnv rnds1 rnds2 n m kids playpen_size rbts obstcs drty carryingKids =
     let start_x = head rnds1
         start_y = head rnds2
-        env = ENV n m (-11,-11) [] [] [] [] [] [] []
+        env = ENV n m [] [] [] [] [] [] []
         playpen = buildPlayPen (start_x,start_y) playpen_size env
         chld = setElement kids rnds1 rnds2 playpen
         rbt = setElement rbts rnds1 rnds2 (chld++playpen)
         obstc = setElement obstcs rnds1 rnds2 (chld++rbt++playpen)
-        dirty = [(0,0)]--setElement drty rnds1 rnds2 (chld++rbt++playpen++obstc)
-        in ENV n m (-11,-11) chld obstc dirty playpen rbt carryingKids []
+        dirty = setElement drty rnds1 rnds2 (chld++rbt++playpen++obstc)
+        in ENV n m chld obstc dirty playpen rbt carryingKids []
 
 emptyCell :: (Int, Int) -> (Int, Int) -> ENV -> Bool
 emptyCell (p1,p2) (x, y) env

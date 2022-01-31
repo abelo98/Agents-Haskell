@@ -24,7 +24,7 @@ main t rows columns kids rbts obstcs dirty rbtType = do
         in startSimulation t t 0 kids rbts obstcs dirty rbts_types new_env --(newEmptyEnv rows columns rbts)
 
 
-newEmptyEnv n m rbts = ENV n m (-6,-6) [] [] [] [] [] (buildList rbts False) []
+newEmptyEnv n m rbts = ENV n m [] [] [] [] [] (buildList rbts False) []
 
 buildList 0 _ = []
 buildList rbts value = value:buildList (rbts-1) value
