@@ -17,11 +17,11 @@ main t rows columns kids rbts obstcs dirty rbtType = do
     gen1 <- newStdGen
     gen2 <- newStdGen
     let
-        rnds1 = randomNumbers rows gen1
-        rnds2 = randomNumbers columns gen2
-        new_env = generateEnv rnds1 rnds2 rows columns kids kids rbts obstcs dirty (buildList rbts False)
+        -- rnds1 = randomNumbers rows gen1
+        -- rnds2 = randomNumbers columns gen2
+        -- new_env = generateEnv rnds1 rnds2 rows columns kids kids rbts obstcs dirty (buildList rbts False)
         rbts_types = buildList rbts rbtType
-        in startSimulation t t 0 kids rbts obstcs dirty rbts_types new_env --(newEmptyEnv rows columns rbts)
+        in startSimulation t t 0 kids rbts obstcs dirty rbts_types (newEmptyEnv rows columns rbts)
 
 
 newEmptyEnv n m rbts = ENV n m [] [] [] [] [] (buildList rbts False) []
@@ -30,21 +30,21 @@ buildList 0 _ = []
 buildList rbts value = value:buildList (rbts-1) value
 
 startSimulation t counter globalCounter kids rbts obstcs dirt rbtType env
-    | globalCounter == t*6 = print (calculateDirtPercent env)
-    --  counter == t = do
-    --     gen1 <- newStdGen
-    --     gen2 <- newStdGen
-    --     print env
-    --     print kids
-    --     print "cambiar"
-    --     let
-    --         n = rows env
-    --         m = columns env
-    --         rnds1 = randomNumbers n gen1
-    --         rnds2 = randomNumbers m gen2
-    --         new_kids = kids-carriedKids (carryingChld env)
-    --         new_env = generateEnv rnds1 rnds2 n m new_kids kids rbts obstcs dirt (carryingChld env)
-    --         in startSimulation t 0 (globalCounter+1) kids rbts obstcs dirt new_env
+    | globalCounter == t*6 = print (env, calculateDirtPercent env)
+    | counter == t = do
+        gen1 <- newStdGen
+        gen2 <- newStdGen
+        print env
+        print kids
+        print "cambiar"
+        let
+            n = rows env
+            m = columns env
+            rnds1 = randomNumbers n gen1
+            rnds2 = randomNumbers m gen2
+            new_kids = kids-carriedKids (carryingChld env)
+            new_env = generateEnv rnds1 rnds2 n m new_kids kids rbts obstcs dirt (carryingChld env)
+            in startSimulation t 0 (globalCounter+1) kids rbts obstcs dirt rbtType new_env
 
     | otherwise = do
         gen1 <- newStdGen

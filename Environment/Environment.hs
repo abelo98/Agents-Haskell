@@ -38,7 +38,7 @@ emptyCellForRobot :: (Int, Int) -> ENV -> Bool -> Bool
 emptyCellForRobot pos env withChld
     | withChld && inList pos (chld env) ||
       inList pos (obstc env) ||
-      inList pos (playpen env) &&  inList pos (chld env) ||
+      inList pos (playpenTaken env) ||
       inList pos (robots env)  = False
     | otherwise = True
 
