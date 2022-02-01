@@ -14,7 +14,7 @@ import GHC.IO (unsafePerformIO)
 
 --En el main hay q chequear condiciones de factibilidad con obstc, ninos, basura y rbts
 main :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int ->[IO Float]->Int->Int->Int-> IO ()
-main _ _ _ _ _ _ _ _ allPercents vict loss 0 = print (vict,loss)
+main _ _ _ _ _ _ _ _ allPercents vict loss 0 = print (unsafePerformIO(mean allPercents),vict,loss)
 main t rows columns kids rbts obstcs dirty rbtType allPercents vict loss noSim = do
     let
         rbts_types = buildList rbts rbtType
