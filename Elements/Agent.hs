@@ -38,6 +38,15 @@ action pos 1 idx env
     | detectKid env = moveTowardsKid pos (chld env) idx env
     | otherwise = env
 
+action pos 2 idx env
+    | isDirty pos env = clean pos env
+    | isCarryingChild (carryingChld env) idx &&
+        emptyPlace env == pos = dropKid pos idx env
+    | isCarryingChild (carryingChld env) idx =
+        carryKidToPlaypen pos (emptyPlace env) env
+    | detectKid env = moveTowardsKid pos (chld env) idx env
+    | detectDirty env = moveTowardsDirty pos (dirty env) idx env
+    | otherwise = env
 
 
 makeMoves [] _ _ env = env
