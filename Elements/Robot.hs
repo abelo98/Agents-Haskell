@@ -52,8 +52,7 @@ getStep pos env objList carrying =
     let free_ady_rbtPos = filterCellsRbt emptyCellForRobot (getAdy pos env) env carrying
         pi = updatePi pos free_ady_rbtPos
         pi_posKid = bfs free_ady_rbtPos pi [pos] env carrying objList
-        poskid = snd pi_posKid
-        newpi = fst pi_posKid
+        (newpi,poskid) =  pi_posKid
         steps = reverse (nextStep newpi pos poskid)
     in if carrying && length steps > 1
         then steps!!1
@@ -113,28 +112,28 @@ carryKidToPlaypen pos emptySpot env =
 
 moveTowardsKid pos objectives idx env = 
     let step = getStep pos env objectives False
-        new_kids_new_carrying = grabKid step idx env
+        (new_kids,new_carrying) = grabKid step idx env
         new_robots = remove pos (robots env)++[step]
         in ENV (rows env)
             (columns env)
-            (fst new_kids_new_carrying)
+            new_kids
             (obstc env)
             (dirty env)
             (playpen env)
             new_robots
-            (snd new_kids_new_carrying)
+            new_carrying
             (playpenTaken env)
 
 moveTowardsDirty pos objectives idx env =
     let step = getStep pos env objectives False
-        new_kids_new_carrying = grabKid step idx env--si se quita esto entonces va a obviar a un kid en su celda
+        (new_kids,new_carrying) = grabKid step idx env
         new_robots = remove pos (robots env)++[step]
     in ENV (rows env)
         (columns env)
-        (fst new_kids_new_carrying)
+        new_kids
         (obstc env)
         (dirty env)
         (playpen env)
         new_robots
-        (snd new_kids_new_carrying)
+        new_carrying
         (playpenTaken env)

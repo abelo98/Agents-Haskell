@@ -18,9 +18,6 @@ where
 import System.Random (Random(randomIO, randomRIO, randomRs), StdGen, newStdGen)
 import Environment.Env (ENV(rows, columns))
 
-idR :: Int -> Int
-idR x = x
-
 
 rnd :: [(Int,Int)]-> Int ->Int -> Int -> IO ()
 rnd l x n m = do

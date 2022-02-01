@@ -19,10 +19,8 @@ expandForPlaypen :: (Int, Int) -> Int -> [(Int,Int)]-> ENV -> [(Int,Int)] -> [(I
 expandForPlaypen start 0 ady env taken = []
 expandForPlaypen start n_cldr ady@(e:rest) env taken
     | not (inList start taken)  =
-        let next_x = fst e
-            next_y = snd e
-            new_adys = ady ++ disjoin (getAdy (next_x, next_y) env) ady
-        in start:expandForPlaypen (next_x, next_y) (n_cldr-1) new_adys env (taken++[start])
+        let new_adys = ady ++ disjoin (getAdy e env) ady
+        in start:expandForPlaypen e (n_cldr-1) new_adys env (taken++[start])
     | otherwise = expandForPlaypen (head rest) n_cldr rest env taken
 
 -- Computes the cell with the minimun distance of all playpen cells to the 4 corners
