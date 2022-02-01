@@ -5,8 +5,7 @@ module Environment.Environment(
     generateEnv,
     emptyCell,
     emptyCellForRobot,
-    countKids,
-    finalState)
+    countKids)
 
 where
 import Utils.Utils (getAdy,setElement, randomNumbers, inList, inMatriz, disjoin)
@@ -48,4 +47,3 @@ countKids (x:xs) env
   | inList x (chld env) = 1 + countKids xs env
   | otherwise = countKids xs env
 
-finalState env = null (dirty env) && null (chld env)
