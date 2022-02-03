@@ -3,12 +3,12 @@ where
 
 data ENV = ENV {rows :: Int, 
                 columns :: Int,
-                chld::[(Int,Int)],
+                kids::[(Int,Int)],
                 obstc::[(Int,Int)],
                 dirty::[(Int,Int)],
                 playpen::[(Int,Int)],
                 robots::[(Int,Int)],
-                carryingChld::[Bool],
+                carryingKid::[Bool],
                 playpenTaken::[(Int,Int)]
                 } deriving (Show)
 

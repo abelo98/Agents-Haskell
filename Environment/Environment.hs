@@ -10,9 +10,10 @@ module Environment.Environment(
 where
 import Utils.Utils (getAdy,setElement, randomNumbers, inList, inMatriz, disjoin)
 import System.Random (newStdGen)
-import Environment.Env (ENV(ENV, rows, columns, obstc, dirty, playpen, robots, chld, carryingChld, playpenTaken))
+
 import Elements.Obstacle (canMoveObstcs)
 import Elements.Playpen(buildPlayPen)
+import Environment.Env ( ENV(..) )
 
 
 generateEnv rnds1 rnds2 n m kids playpen_size rbts obstcs drty carryingKids =
@@ -36,7 +37,7 @@ emptyCell (p1,p2) (x, y) env
 
 emptyCellForRobot :: (Int, Int) -> ENV -> Bool -> Bool
 emptyCellForRobot pos env withChld
-    | withChld && inList pos (chld env) ||
+    | withChld && inList pos (kids env) ||
       inList pos (obstc env) ||
       inList pos (playpenTaken env) ||
       inList pos (robots env)  = False
@@ -44,6 +45,6 @@ emptyCellForRobot pos env withChld
 
 countKids [] _= 0
 countKids (x:xs) env
-  | inList x (chld env) = 1 + countKids xs env
+  | inList x (kids env) = 1 + countKids xs env
   | otherwise = countKids xs env
 
