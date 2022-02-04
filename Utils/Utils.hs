@@ -11,7 +11,8 @@ module Utils.Utils(
     getDir,
     disjoin,
     filterCellsRbt,
-    updateElement
+    updateElement,
+    allCells
 )
 
 where
@@ -40,7 +41,6 @@ setElement n (x:xs) (y:ys) occupated
     | inList (x,y) occupated = setElement n xs ys occupated
     | otherwise = (x,y):setElement (n-1) xs ys (occupated++[(x,y)])
         
-
 
 filterCells _ [] env (p1,p2) = []
 filterCells f2 (x:xs) env (p1,p2)
@@ -80,9 +80,5 @@ updateElement (x:xs) idx value | idx == 0 = value:xs
                                 | otherwise = x:updateElement xs (idx-1) value
 
 
--- allCells _ _ 0  = []
--- allCells 0 m total = [(0,m)]
--- allCells n 0 total = [(n,0)]
--- allCells n m total =  
---     (n,m):allCells (n-1) m (total-1) ++ allCells n (m-1) (total-1) ++ allCells (n-1) (m-1) (total-1)
+allCells n m= [(x,y)| x <- [0..n-1], y <- [0..m-1]]
 

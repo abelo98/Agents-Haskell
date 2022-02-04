@@ -1,19 +1,22 @@
-#### ENVIRONMENT
-Para plasmar la idea de lo que representa el ambiente se creo un nuevo tipo de datos llamado ENV. Su principal característica es que sus funciones constructoras son en su mayoría listas de tuplas de Int que permiten determinar las posiciones del agente u elemento del ambiente que representan. El tipo ENV tiene como funciones constructoras las siguientes: 
+### Módulos
 
-- rows :: Int : Esta funcion permite conocer el numero de filas del ambiente
-- columns :: Int : Esta funcion permite conocer el numero de columnas del ambiente
-- kids :: [(Int,Int)] : Es una funcion utilizada para mantener las posiciones de los niños.
-- obstc :: [(Int,Int)] : Se utiliza para mantener las posiciones de los obstáculos.
-- dirt :: [(Int,Int)] : Devuelve una lista con las posiciones de las celdas del ambiente sucias.
-- playpen :: [(Int,Int)] : Devuelve una lista con las posiciones que ocupa el corral.
-- robots :: [(Int,Int)] : lista con las posiciones que ocupa cada agente de limpieza en el ambiente. 
+#### ENV
 
-- carryingKid :: [Bool] : Devuelve una lista indicando que el i-esimo agente se encuentra cargando un niño. 
+Para plasmar la idea de lo que representa el ambiente se creo un nuevo tipo de datos llamado $ENV$. Su principal característica es que sus funciones constructoras son en su mayoría listas de tuplas de $Int$ que permiten determinar las posiciones del agente u elemento del ambiente que representan. El tipo $ENV$ tiene como funciones constructoras las siguientes: 
 
-- playpenTaken :: [(Int,Int)] : lista indicando las posiciones del corral que han sido tomadas. 
+- $rows :: Int :$ Esta funcion permite conocer el numero de filas del ambiente
+- $columns :: Int :$ Esta función permite conocer el numero de columnas del ambiente
+- $kids :: [(Int,Int)] :$ Es una funcion utilizada para mantener las posiciones de los niños.
+- $obstc :: [(Int,Int)] :$ Se utiliza para mantener las posiciones de los obstáculos.
+- $dirt :: [(Int,Int)] :$ Devuelve una lista con las posiciones de las celdas del ambiente sucias.
+- $playpen :: [(Int,Int)] :$ Devuelve una lista con las posiciones que ocupa el corral.
+- $robots :: [(Int,Int)] :$lista con las posiciones que ocupa cada agente de limpieza en el ambiente. 
 
-Trabajar con un ambiente que se materializa a través del tipo Env nos fue muy beneficioso ya que cuando alguna función necesitaba modificar el ambiente recibía un ENV que podía cambiar agregándole nuevas listas con posiciones cambiadas o boleanos distintos, y este pasaba a ser el nuevo ambiente actual. 
+- $carryingKid :: [Bool] :$Devuelve una lista indicando que el i-esimo agente se encuentra cargando un niño. 
+
+- $playpenTaken :: [(Int,Int)]:$ lista indicando las posiciones del corral que han sido tomadas. 
+
+Trabajar con un ambiente que se materializa a través del tipo $Env$ nos fue muy beneficioso ya que cuando alguna función necesitaba modificar el ambiente recibía un $ENV$ que podía cambiar agregándole nuevas listas con posiciones cambiadas o boleanos distintos, y este pasaba a ser el nuevo ambiente actual. 
 Por otra parte podemos agregar que resulta totalmente escalable esta solución ya que si en una instancia futuro queremos agregar nuevos elementos al ambiente(díganse baches, mascotas, etc) solo debemos agregar otras funciones constructoras con las posiciones de dichos elementos.
 
 
@@ -136,7 +139,7 @@ Las funciones desarrolladas son:
 
 - $carriedKids:$ Función para saber cuantos niños están siendo cargados por robots.
 
-- $simulateMoves:$ Esta función es la encargada de realizar el movimiento del niño y de llamar a las funciones que generarían otros cambios en el ambiente como la aparición de suciedad o mover obstáculos. Recibe la lista con los posibles movimientos de los niños, las posiciones antiguas que tenían, tres $StdGen$, la lista del paso dado por un niño, la lista con las posiciones actuales de los obstáculos, la lista con la suciedad actual y el ambiente.
+- $simulateMoves:$ Esta función es la encargada de realizar el movimiento del niño y de llamar a las funciones que generarían otros cambios en el ambiente como la aparición de suciedad o mover obstáculos. Recibe la lista con los posibles movimientos de los niños, las posiciones antiguas que tenían, un $StdGen$, la lista de pasos dado por cada niño, la lista con las posiciones actuales de los obstáculos, la lista con la suciedad actual y el ambiente.
 
   Nuevamente nos valemos de $pattern \space matching$ para determina que en el caso que la lista con los posibles movimientos este vacía, agregamos a lista $taken$ la posición actual del robot, indicando esto que no se movió. Si no está vacía la lista procedemos a seleccionar de forma aleatoria, usando $pickRandom$, una de las posibles posiciones en las que se puede  mover el niño. Si dicha posición no está en la lista $taken$ (no ha sido tomada por otro niño) y no está en la lista $restOldPositions$ (posiciones de los niños que están después del que se está analizando), entonces es factible dar el paso. Una aclaración es de por qué solo se analizan la posiciones de $restOldPositions$ es que los anteriores niños ya habrán cambiado su posición y por tanto esas antiguas pudieran coincidir con la que se quiere tomar y debemos considerarlas y en caso de que un niño anterior haya determinado no moverse entonces tendrá la misma posición en $taken$ y no se analiza toma dicha celda para el niño actual. De esta forma solo nos interesaría saber que no estamos tomando una posición ocupada por un niño de los que falta por analizar y esas celdas están en $restOldPositions$. En caso de no cumplirse la condición para que el niño de un paso, de forma recursiva realizamos un llamado a  $simulateMoves$ pero ahora con ahora sin la posición conflictiva, en el caso de que ninguna se posible de tomar, se habrá vaciado la lista y el niño no se mueve. 
 
@@ -146,7 +149,7 @@ Las funciones desarrolladas son:
 
   En el caso base retornamos un ambiente final que contiene una nueva lista de obstáculos, suciedad y niños, que se fueron actualizando hasta llegar al estado final.
 
-
+  Se ha de destacar que en cada llamado recursivo se crean nuevos generadores de randoms a partir del método $randomR$ y estos son pasados a las funciones que trabajan la aleatoriedad para de esta forma en cada paso recursivo no tener la misma salida en dichas funciones en pues no tendrán los mismos $StdGen$.
 
 #### Módulo Dirt
 
@@ -193,4 +196,26 @@ $percent$ es una función para realizar el calculo del porcentual.
 
 $finalState$ es una función que determina si estamos en un estado final y por tanto se detiene la simulación. Los estados finales serían: que todos los niños estén en el corral y no haya suciedad o que se haya sobrepasado el $60\%$ de suciedad.
 
-$victOrLoss$ esta es una función auxiliar que utilizamos para contar si dado un porrciento se obtuvo una victoeria ($1$ en el primer elemento de la tupla devuelta) o una derrota ($0$ en el segundo elemento de la tupla devuelta).
+$victOrLoss:$ Ssta es una función auxiliar que utilizamos para contar si dado un porrciento se obtuvo una victoeria ($1$ en el primer elemento de la tupla devuelta) o una derrota ($0$ en el segundo elemento de la tupla devuelta).
+
+$mean$ nos permite calcular la media de los porcientos de limpieza de cada simulación.
+
+
+
+#### Módulo Environment
+
+En este módulo tenemos la funciones que más tienen  que ver con el ambiente. Aquí tenemos $generateEnv$ que es donde se crean los ambientes, conocidos varios elementos como la cantidad de niños, las dimensiones, el tamaño del corral, los obstáculos, los robots de limpieza, la suciedad y la lista indicando que robots se encuentran cargando niños. La idea principal es la de ir creando las listas de posiciones de los elementos que conforman el ambiente. Estas listas son creadas con el método $setElement$ explicado con anterioridad y recibiendo la lista con las posiciones tomadas, se evita que se den posiciones dadas con anterioridad. Finalmente retornamos el ambiente creado. 
+
+La función $emptyCell$ determina si una posición determinada es libre para un niño. Para ello se chequean las condiciones que la hacen libre y se da una respuesta $True$ o $False$. Esto se usa como una especie de función filtro a la hora de determinar las posibles celdas a las que puede moverse un niño. Señalar que se recibe la posición $(p1,p2)$ donde está el niño, para poder determinar si un obstáculo se puede mover o no en caso de que se este desplazando hacia una celda ocupada por uno.
+
+El método $emptyCellForRobot$ funciona de igual forma que el anterior, solo que aquí se quieren determinar las celdas libres para un robot. Por ejemplo no se analiza si una cierta posición se encuentra sucia o no pues el robot puede acceder a ella y limpiarla o pasar por encima y continuar su camino. Aquí destacar que se recibe un argumento $withChld$, tal que si es verdadero y la posición a la que se quiere mover el robot está ocupada por un niño, entonces no se considera libre, en caso de ser falso si se considera libre y el robot cargaría al niño.
+
+La función $countKids$ nos sirve para determinar cuantas celdas de una lista se encuentran ocupadas por niños. Esto es necesario para contar en una cuadrícula cuantos niños hay.
+
+### Simulación
+
+Para poder conocer como se desenvuelven los agentes en diferentes ambientes se crea una algoritmo que realice las simulaciones y muestre los resultados. Esto se lleva a cabo en el módulo $App$, para ello se crea la función $main$ encargada de recibir las condiciones iniciales del ambiente y realizar una determinada cantidad de simulaciones indicada por el usuario. Luego de $noSim$ se obtienen el promedio de los porcietos de suciedad de cada ambiente, contando también las veces que cumplió su objetivo y las que no.
+
+En la función $startSimulation$ es donde se lleva a cabo toda la simulación de acciones tanto de los agentes, como de los niños y la variación aleatoria. Si nos encontramos en un esatdo final retornamos el porciento de suciedad que se tiene hasta el momento. Recordemos que los estados finales son cuando todos los niños están en el corral y no hay suciedad o cuando se sobrepasa el $60\%$ de suciedad en el ambiente. Si se completaron $100*t$ turnos entonces se detiene la simulación sin haber alcanzado un estado final, retornando el porciento de suciedad. Si se han completado $t$ turnos entonces toca realizar una variación aleatoria del ambiente. En nuestro caso esto representa que serán modificados todos los elementos del ambiente. En otras palabras se cambia la posición del corral, se redistribuye la suciedad, se sacan los niños que estén en el corral y se dan nuevas posiciones a ellos y a los sueltos también, se cambian los robots de posición y los obstáculos. Lo único que se mantiene igual es que si un robot está cargando un niño, lo seguirá cargando. De esta forma recreamos las peores condiciones en a las que se puede enfrentar un agente, pues todo cambia de lugar. Luego continuamos la simulación realizando un llamado recursivo.
+
+Si ninguna de las premisas anteriores se cumplen entonces se realizan los movimientos de los agentes y luego los cambios naturales del ambiente, que pueden ser que se muevan los niños y a su vez obstáculos y/o que aparezca suciedad. Cabe destacar que si falta solo una unidad de tiempo para que se realice la variación aleatoria entonces se hace un llamado recursivo sin aumentar la cantidad de turnos. Esto se hace con el objetivo de que en un mismo turno ocurra el cambio natural y luego la variación aleatoria. En caso de que no se este en el turno $t-1$ se hace un llamado aumentando la cantidad de turnos. Destacar que siempre, luego de un cambio natural o variación, se pasa el nuevo ambiente obtenido.

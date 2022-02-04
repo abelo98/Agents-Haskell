@@ -11,7 +11,7 @@ import Elements.Agent (makeMoves)
 import Environment.Statistics (calculateDirtPercent, finalState, victOrLoss, mean)
 import GHC.IO (unsafePerformIO)
 import Environment.Env
-import Environment.Environment (generateEnv)
+import Environment.Environment (generateEnv, generateEnv2)
 
 
 --En el main hay q chequear condiciones de factibilidad con obstc, ninos, basura y rbts
@@ -70,8 +70,10 @@ startSimulation t counter globalCounter kids rbts obstcs dirt rbtType env
 
 startSimulation2 t counter globalCounter kids rbts obstcs dirt rbtType env
     | finalState env && globalCounter /= 0 = print(unsafePerformIO(calculateDirtPercent env), env,1)
-    | globalCounter == t*100 = print(unsafePerformIO(calculateDirtPercent env), env,2)
+    | globalCounter == t*10 = print(unsafePerformIO(calculateDirtPercent env), env,2)
     | counter == t = do
+        print env
+        print "cambio"
         gen1 <- newStdGen
         gen2 <- newStdGen
         let
@@ -80,7 +82,7 @@ startSimulation2 t counter globalCounter kids rbts obstcs dirt rbtType env
             rnds1 = randomNumbers n gen1
             rnds2 = randomNumbers m gen2
             new_kids = kids-carriedKids (carryingKid env)
-            new_env = generateEnv rnds1 rnds2 n m new_kids kids rbts obstcs dirt (carryingKid env)
+            new_env = generateEnv rnds1 rnds2 n m new_kids kids rbts obstcs dirt (carryingKid env) 
             in startSimulation2 t 0 (globalCounter+1) kids rbts obstcs dirt rbtType new_env
 
     | otherwise = do
