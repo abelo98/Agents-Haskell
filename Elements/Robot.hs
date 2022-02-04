@@ -24,7 +24,7 @@ bfs (u:us) pi visited env withChld objList =
     if not(inList u objList)
         then
             let adys_u = disjoin (getAdy u env) (visited++us) --adyacentes de u q no estan en la lista de ady por visitar ni los visitados
-                free_ady_u = filterCellsRbt emptyCellForRobot adys_u env withChld
+                free_ady_u = emptyCellForRobot adys_u env withChld
                 new_ady = us ++ free_ady_u
                 newPi = pi++updatePi u free_ady_u
                 new_visited = visited++[u]
@@ -48,7 +48,7 @@ findParent (x:xs) child | child == fst x = snd x
                         | otherwise = findParent xs child
 
 getStep pos env objList carrying =
-    let free_ady_rbtPos = filterCellsRbt emptyCellForRobot (getAdy pos env) env carrying
+    let free_ady_rbtPos = emptyCellForRobot (getAdy pos env) env carrying
         pi = updatePi pos free_ady_rbtPos
         pi_posKid = bfs free_ady_rbtPos pi [pos] env carrying objList
         (newpi,poskid) =  pi_posKid

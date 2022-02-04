@@ -72,13 +72,14 @@ emptyCellForKid (p1,p2) ((x, y):xs) env
       inList (x,y) (robots env)  = emptyCellForKid (p1,p2) xs env
     | otherwise = (x, y):emptyCellForKid (p1,p2) xs env
 
-emptyCellForRobot :: (Int, Int) -> ENV -> Bool -> Bool
-emptyCellForRobot pos env withChld
+emptyCellForRobot :: [(Int, Int)] -> ENV -> Bool -> [(Int,Int)]
+emptyCellForRobot [] _ _ = [] 
+emptyCellForRobot (pos:xs) env withChld
     | withChld && inList pos (kids env) ||
       inList pos (obstc env) ||
       inList pos (playpenTaken env) ||
-      inList pos (robots env)  = False
-    | otherwise = True
+      inList pos (robots env)  = emptyCellForRobot xs env withChld
+    | otherwise = pos:emptyCellForRobot xs env withChld
 
 countKids [] _= 0
 countKids (x:xs) env
