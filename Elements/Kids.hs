@@ -54,17 +54,23 @@ simulateMoves (1:xs) (o:restKidsPos) gen env =
          grid2 = remove dest grid
          new_kids = makeMove o dest env
         in
-            let poss_dirty_cells = emptyCellToMess grid2 env
+            let 
                 (_,gen2) = randomR (0,2::Int) gen
                 (_,gen3) = randomR (0,3::Int) gen
-                new_dirt = dirty env ++ generateDirt kids_in_grid poss_dirty_cells gen2 gen3
+                
             in if inList dest (obstc env)
                 then
                 let newObstc = moveObstc dest (getDir dest o) (obstc env)
-                    new_env = ENV (rows env) (columns env) new_kids newObstc new_dirt (playpen env) (robots env) (carryingKid env) (playpenTaken env)
-                in simulateMoves xs restKidsPos gen1 new_env
+                    env2 = ENV (rows env) (columns env) new_kids newObstc (dirty env) (playpen env) (robots env) (carryingKid env) (playpenTaken env)
+                    
+                    poss_dirty_cells = emptyCellToMess grid2 env2
+                    new_dirt = dirty env2 ++ generateDirt kids_in_grid poss_dirty_cells gen2 gen3
+                    final_env = ENV (rows env2) (columns env2) (kids env2) (obstc env2) new_dirt (playpen env2) (robots env2) (carryingKid env2) (playpenTaken env2)
+                in simulateMoves xs restKidsPos gen1 final_env
                 else
                     let
-                         new_env2 = ENV (rows env) (columns env) new_kids (obstc env) new_dirt (playpen env) (robots env) (carryingKid env) (playpenTaken env)
-                    in simulateMoves xs restKidsPos gen1 new_env2
+                        poss_dirty_cells = emptyCellToMess grid2 env
+                        new_dirt = dirty env ++ generateDirt kids_in_grid poss_dirty_cells gen2 gen3
+                        env3 = ENV (rows env) (columns env) new_kids (obstc env) new_dirt (playpen env) (robots env) (carryingKid env) (playpenTaken env)
+                    in simulateMoves xs restKidsPos gen1 env3
 
