@@ -68,10 +68,3 @@ simulateMoves (1:xs) (o:restKidsPos) gen env =
                          new_env2 = ENV (rows env) (columns env) new_kids (obstc env) new_dirt (playpen env) (robots env) (carryingKid env) (playpenTaken env)
                     in simulateMoves xs restKidsPos gen1 new_env2
 
-
-testM = do 
-    g<-newStdGen 
-
-    let 
-        t = ENV {rows = 6, columns = 6, kids = [(2,2)], obstc = [(1,1),(1,2),(1,3),(2,1),(2,3),(3,1),(3,2),(3,3)], dirty = [], playpen = [(0,0)], robots = [], carryingKid = [], playpenTaken = []}
-        in print (simulateMoves [1] [(2,2)] g t)
