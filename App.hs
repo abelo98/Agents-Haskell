@@ -2,7 +2,6 @@
 -- import System.Random(newStdGen)
 module App
 where
-import Utils.Utils(randomNumbers, getAdy, filterCellsRbt)
 
 import System.Random (newStdGen)
 import Elements.Kids (moveKids, carriedKids)
@@ -46,7 +45,7 @@ startSimulation t counter globalCounter kids rbts obstcs dirt rbtType env
         let
             n = rows env
             m = columns env
-            rnds1 = randomNumbers n gen1
+            -- rnds1 = randomNumbers n gen1
             -- rnds2 = randomNumbers m gen2
             new_kids = kids-carriedKids (carryingKid env)
             new_env = generateEnv n m new_kids kids rbts obstcs dirt (carryingKid env) gen1
@@ -73,12 +72,12 @@ startSimulation2 t counter globalCounter kids rbts obstcs dirt rbtType env
         print env
         print "cambio"
         gen1 <- newStdGen
-        gen2 <- newStdGen
+        -- gen2 <- newStdGen
         let
             n = rows env
             m = columns env
-            rnds1 = randomNumbers n gen1
-            rnds2 = randomNumbers m gen2
+            -- rnds1 = randomNumbers n gen1
+            -- rnds2 = randomNumbers m gen2
             new_kids = kids-carriedKids (carryingKid env)
             new_env = generateEnv  n m new_kids kids rbts obstcs dirt (carryingKid env) gen1
             in startSimulation2 t 0 (globalCounter+1) kids rbts obstcs dirt rbtType new_env
