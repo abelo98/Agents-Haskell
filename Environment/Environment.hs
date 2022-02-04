@@ -8,7 +8,7 @@ module Environment.Environment(
     countKids,emptyCellToMess)
 
 where
-import Utils.Utils (getAdy,setElement, randomNumbers, inList, inMatriz, disjoin, allCells, pickRandom)
+import Utils.Utils (getAdy, randomNumbers, inList, inMatriz, disjoin, allCells, pickRandom)
 import System.Random (newStdGen, Random (randomR))
 
 import Elements.Obstacle (canMoveObstcs)

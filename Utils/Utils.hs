@@ -2,15 +2,12 @@
 module Utils.Utils(
     randomNumbers,
     getAdy,
-    setElement,
     inList,
-    filterCells,
     pickRandom,
     remove,
     inMatriz,
     getDir,
     disjoin,
-    filterCellsRbt,
     updateElement,
     allCells
 )
@@ -34,23 +31,6 @@ getAdy (x,y) = filterAdy [(x-1,y),(x-1,y+1),
               (x+1,y),(x+1,y-1),
               (x,y-1),(x-1,y-1)]
 
-
-setElement :: Int -> [Int] -> [Int] -> [(Int,Int)] -> [(Int,Int)]
-setElement 0 _ _ l  = []
-setElement n (x:xs) (y:ys) occupated
-    | inList (x,y) occupated = setElement n xs ys occupated
-    | otherwise = (x,y):setElement (n-1) xs ys (occupated++[(x,y)])
-        
-
-filterCells _ [] env (p1,p2) = []
-filterCells f2 (x:xs) env (p1,p2)
-    | f2 (p1,p2) x env = x:filterCells f2 xs env (p1,p2)
-    | otherwise = filterCells f2 xs env (p1,p2)
-
-filterCellsRbt _ [] env withChld = []
-filterCellsRbt f2 (x:xs) env withChld
-    | f2 x env withChld = x:filterCellsRbt f2 xs env withChld
-    | otherwise = filterCellsRbt f2 xs env withChld
 
 pickRandom [] _ _ = []
 pickRandom l 0 gen = []

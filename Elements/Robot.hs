@@ -14,7 +14,7 @@ clean
 )
 
 where
-import Utils.Utils (filterCellsRbt, disjoin, getAdy, inList, remove, updateElement)
+import Utils.Utils (disjoin, getAdy, inList, remove, updateElement)
 import Environment.Env
 import Environment.Environment
 

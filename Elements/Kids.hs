@@ -2,7 +2,7 @@
 module Elements.Kids(moveKids,carriedKids)
 where
 
-import Utils.Utils (getAdy, filterCells, randomNumbers, pickRandom, inList, remove, inMatriz,getDir, disjoin)
+import Utils.Utils (getAdy, randomNumbers, pickRandom, inList, remove, inMatriz,getDir, disjoin)
 import Environment.Environment (ENV, emptyCellForKid, countKids, emptyCellToMess)
 import System.Random (newStdGen, Random (randomR))
 
