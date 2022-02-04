@@ -150,4 +150,47 @@ Las funciones desarrolladas son:
 
 #### Módulo Dirt
 
-Este modulo alberga la función encargada de generar la suciedad tras el movimiento de un niño. La idea es que cuando un niño se mueve se analice la cuadricula de $3$x$3$ que tiene como centro su antigua posición. Luego nuestra función generateDirt recibe los niños encontrados en la cuadricula, la lista con las posibles posiciones a ensuciar(celdas libres)  de la cuadricula de $3$x$3$ y dos generadores. Esto nos sirve para, según la cantidad de niños en la cuadricula, escoger aleatoriamente la cantidad que se va a ensuciar, atendiendo los limites establecidos en el proyecto, y cuales de dichas posibles celdas a ensuciar serán tomadas de forma aleatoria.
+Este modulo alberga la función encargada de generar la suciedad tras el movimiento de un niño. La idea es que cuando un niño se mueve se analice la cuadricula de $3x3$ que tiene como centro su antigua posición. Luego nuestra función $generateDirt$ recibe los niños encontrados en la cuadricula, la lista con las posibles posiciones a ensuciar(celdas libres)  de la cuadricula de $3$x$3$ y dos generadores. Esto nos sirve para, según la cantidad de niños en la cuadricula, escoger aleatoriamente la cantidad que se va a ensuciar, atendiendo los limites establecidos en el proyecto, y cuales de dichas posibles celdas a ensuciar serán tomadas de forma aleatoria.
+
+
+
+#### Módulo Obstacle
+
+Este módulo posee dos funciones encargadas de conocer si se puede mover cierto obstáculo y otra realiza el movimiento de los obstáculos.
+
+Las funciones encargadas de dichas responsabilidades son:
+
+- $canMoveObstcs:$ Esta función recibe como parámetros una posición $(x,y)$  a la que el niño se va a mover y otra posición $(x_1,y_1)$ que no son más que la resta de las coordenadas destino menos las del origen. De esta forma si sumamos $(x_1,y_1)$ a $(x,y)$ obtenemos una coordenadas $(x_2,y_2)$ que es la posición a la que se pudiera desplazar un objeto si está vacía la celda, si es otro el obstáculo hacemos un llamado recursivo partiendo como celda de destino $(x_2,y_2)$ y le sumamos $(x_1,y_1)$ para determinar que se encuentra en la siguiente dirección en que se está desplazando un obstáculo. Se retorna que no se puede mover un obstáculo en determinada dirección si se alcanza el límite del ambiente o se llega a una posición no vacía que no tiene un obstáculo.
+- $moveObstc:$ Este método, al igual que el anterior, recibe una posición donde se encuentra un obstáculo, las coordenadas que hay que sumarle a su posición para desplazarlo en la dirección que se movió un niño y la lista de obstáculos. Pasamos por cada uno de los obstáculos, si no es el que se movió entonces se guarda en la lista y llamamos recursivamente con las mismas condiciones pero con el resto de obstáculos. Si se encuentra el obstáculo que se quiere mover se guarda en la lista sumándole las nuevas coordenadas para desplazarlo en la dirección requerida $(p1+x1,p2+y1)$. En este instante en las coordenadas $(p1+x1,p2+y1)$ puede ser que hayan dos obstáculos, por lo que se hace un llamado recursivo para mover $(p1+x1,p2+y1)$ hacia $(p1+2x1,p2+2y1)$ y así sucesivamente hasta haber desplazado todos los obstáculos.
+
+
+
+#### Módulo Utils
+
+Este módulo almacena aquellas funciones de utilidad general y que por ende son usadas en varios módulos. Aquí tenemos:
+
+- $inList:$ Esta función recibe un elemento y una lista y devuelve $True$ si dicho elemento está en la lista.
+- $randomNumbers:$ Esta función es la encargada de dado un entero $x$ devolvernos una lista, que puede ser infinita, de números entre $0$ y $x-1$. Con esto nos estamos aprovechando de que en haskell se realiza una evaluación perezosa, de esta forma nuestra lista infinita no se computa realmente, solo cuanto necesitemos de ella. En muchas ocasiones solo es necesario pedir una cierta cantidad de elementos de la lista y serán solo esos los computados, permitiéndose así la terminación del algoritmo y no cayendo en una evaluación infinita de la expresión.
+- $getAdy:$ Dada una posición y un ambiente, devuelve la lista con sus adyacentes dentro de los límites de la matriz.
+- $setElement$ Función utilizada para crear las listas con las posiciones de los elementos. Para ello se reciben dos listas con valores aleatorios representando los posibles valores de $x$ y de $y$ que pueden haber en la matriz. Si al tomar las cabeceras y analizar si la posición $(x,y)$ ha sido tomada por otro elemento,  llamamos recursivamente con el resto de las listas, En otro caso se agrega a la lista que se está construyendo y se llama recursivamente con un elemento de menos a colocar, los restos de las listas y se actualiza la lista de celdas ocupadas.
+- $filterCells: $ Esta función recibe una función, una lista de celdas, un ambiente y una posición $(p_1,p_2)$, y vamos a aplicarle a la lista de celdas la función pasada que necesita para su ejecución del ambiente y la posición determinada. Se usa principalmente para determinar si los adyacente de la posición $(p_1,p_2)$ cumplen determinadas condiciones, en este caso si es principalmente para sabe si constituyen celdas libres para un niño.
+- $filterCellsRbt:$ Semejante a la anterior pero se quiere saber si las celdas en la lista son  libres para un robot. El argumento $withChld$ es necesario pues si un robot carga un niño entonces una celda ocupada por otro niño en ese caso constituye un obstáculo, en otro caso no.
+- $pickRandom:$ Este es un método que nos permite seleccionar $n$ elementos de una lista de forma aleatoria. Para ello se escoge un índice en el rango de la lista,de forma aleatoria se añade a la lista que estamos formando y se quita de la lista de la que se está escogiendo. Si se nos acaban los elementos de la lista o hemos tomado la cantidad pedida se retorna.
+- $remove:$ Función que elimina un elemento de una lista.
+- $inMatriz:$ Sirve para determinar si una posición está dentro de los límites de la matriz.
+- $getDir:$ Dados dos pares de coordenadas $(x1,y1)$ y $(x2,y2)$ nos retorna $(x1-x2,y1-y2)$ para así saber las coordenadas que se tienen que sumar a un conjunto de celdas y poder desplazarlas.
+- $disjoin:$ Esta función nos retorna todos los elementos de la primera lista que no están en la segunda.
+- $filterAdy:$ Nos retorna aquellos elementos de una lista que están dentro de la matriz.
+- $updateElement:$ Actualiza una posición de una lista con un determinado valor.
+
+
+
+#### Módulo Statistics
+
+Este módulo alberga una función $calculateDirtPercent$ que dado un ambiente nos retorna su porciento de suciedad. Para ello es necesario calcular que porciento representan las celdas sucias con respecto al total de celdas no ocupadas. Destacar aquí que si una celda está ocupada por un robot y sucia no se cuenta como sucia, pues solo se analizan aquellas no ocupadas para determinar el porciento de suciedad.
+
+$percent$ es una función para realizar el calculo del porcentual.
+
+$finalState$ es una función que determina si estamos en un estado final y por tanto se detiene la simulación. Los estados finales serían: que todos los niños estén en el corral y no haya suciedad o que se haya sobrepasado el $60\%$ de suciedad.
+
+$victOrLoss$ esta es una función auxiliar que utilizamos para contar si dado un porrciento se obtuvo una victoeria ($1$ en el primer elemento de la tupla devuelta) o una derrota ($0$ en el segundo elemento de la tupla devuelta).

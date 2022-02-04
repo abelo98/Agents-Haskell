@@ -8,7 +8,7 @@ import System.Random (newStdGen)
 import Elements.Kids (moveKids, carriedKids)
 import Elements.Robot (updatePi, bfs, nextStep)
 import Elements.Agent (makeMoves)
-import Environment.Statistics (calculateDirtPercent, finalState, victOrLoss)
+import Environment.Statistics (calculateDirtPercent, finalState, victOrLoss, mean)
 import GHC.IO (unsafePerformIO)
 import Environment.Env
 import Environment.Environment (generateEnv)
@@ -31,11 +31,7 @@ main2 t rows columns kids rbts obstcs dirty rbtType = do
         z = startSimulation2 t t 0 kids rbts obstcs dirty rbts_types (newEmptyEnv rows columns rbts)
         in z
 
-mean :: [IO Float]  -> IO Float
-mean l = do
-    s <- sum <$> sequence l
-    return (s / t)
-    where t = fromIntegral (length l) :: Float
+
 
 
 newEmptyEnv n m rbts = ENV n m [] [] [] [] [] (buildList rbts False) []
@@ -59,15 +55,12 @@ startSimulation t counter globalCounter kids rbts obstcs dirt rbtType env
             in startSimulation t 0 (globalCounter+1) kids rbts obstcs dirt rbtType new_env
 
     | otherwise = do
-        gen1 <- newStdGen
-        gen2 <- newStdGen
-        gen3 <- newStdGen
-        gen4 <- newStdGen
+        gen <- newStdGen
         -- print env
         -- print rbtType
         let
             moveAgents = makeMoves (robots env) rbtType 0 env
-            envAfterKidsMove = moveKids moveAgents gen1 gen2 gen3 gen4
+            envAfterKidsMove = moveKids moveAgents gen 
             total_dirt = length (dirty envAfterKidsMove)
 
          in if t == counter+1
@@ -91,15 +84,12 @@ startSimulation2 t counter globalCounter kids rbts obstcs dirt rbtType env
             in startSimulation2 t 0 (globalCounter+1) kids rbts obstcs dirt rbtType new_env
 
     | otherwise = do
-        gen1 <- newStdGen
-        gen2 <- newStdGen
-        gen3 <- newStdGen
-        gen4 <- newStdGen
-        -- print env
+        gen <- newStdGen
+        print env
         -- print rbtType
         let
             moveAgents = makeMoves (robots env) rbtType 0 env
-            envAfterKidsMove = moveKids moveAgents gen1 gen2 gen3 gen4
+            envAfterKidsMove = moveKids moveAgents gen
             total_dirt = length (dirty envAfterKidsMove)
 
          in if t == counter+1

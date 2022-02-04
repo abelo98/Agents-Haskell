@@ -19,12 +19,6 @@ import System.Random (Random(randomIO, randomRIO, randomRs), StdGen, newStdGen)
 import Environment.Env (ENV(rows, columns))
 
 
-rnd :: [(Int,Int)]-> Int ->Int -> Int -> IO ()
-rnd l x n m = do
-    num1 <- randomRIO (1,n)
-    num2 <- randomRIO (1,n)
-    print num1
-
 inList e [] = False
 inList e (x:xs) | e == x = True
                 | otherwise = inList e xs
@@ -55,7 +49,7 @@ filterCells f2 (x:xs) env (p1,p2)
 
 filterCellsRbt _ [] env withChld = []
 filterCellsRbt f2 (x:xs) env withChld
-    | f2  x env withChld = x:filterCellsRbt f2 xs env withChld
+    | f2 x env withChld = x:filterCellsRbt f2 xs env withChld
     | otherwise = filterCellsRbt f2 xs env withChld
 
 pickRandom [] _ _ = []
@@ -84,3 +78,11 @@ filterAdy (x:xs) env | inMatriz x env = x:filterAdy xs env
 
 updateElement (x:xs) idx value | idx == 0 = value:xs
                                 | otherwise = x:updateElement xs (idx-1) value
+
+
+-- allCells _ _ 0  = []
+-- allCells 0 m total = [(0,m)]
+-- allCells n 0 total = [(n,0)]
+-- allCells n m total =  
+--     (n,m):allCells (n-1) m (total-1) ++ allCells n (m-1) (total-1) ++ allCells (n-1) (m-1) (total-1)
+

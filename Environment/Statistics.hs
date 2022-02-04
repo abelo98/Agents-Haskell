@@ -19,6 +19,12 @@ percent x y = do
     return (100 * ( a / b ))
     where a = fromIntegral x :: Float
           b = fromIntegral y :: Float
+          
+mean :: [IO Float]  -> IO Float
+mean l = do
+    s <- sum <$> sequence l
+    return (s / t)
+    where t = fromIntegral (length l) :: Float
 
 finalState env =  (null (dirty env) && null (playpen env)) || (unsafePerformIO(calculateDirtPercent env) > 60)
 
