@@ -3,7 +3,7 @@
 module Environment.Environment(
     ENV(..),
     generateEnv,
-    emptyCell,
+    emptyCellForKid,
     emptyCellForRobot,
     countKids,generateEnv2,emptyCellToMess)
 
@@ -62,15 +62,15 @@ emptyCellToMess (pos:xs) env
     inList pos (robots env)  = emptyCellToMess xs env
   | otherwise = pos:emptyCellToMess xs env
 
-emptyCell :: (Int, Int) -> (Int, Int) -> ENV -> Bool
-emptyCell (p1,p2) (x, y) env
+emptyCellForKid _ [] _ = [] 
+emptyCellForKid (p1,p2) ((x, y):xs) env
     | inList (x,y) (obstc env) && not (canMoveObstcs (x,y) (x-p1,y-p2) env) ||
       inList (x,y) (dirty env) ||
       inList (x,y) (kids env) ||
       inList (x,y) (playpen env) ||
       inList (x,y) (playpenTaken env) ||
-      inList (x,y) (robots env)  = False
-    | otherwise = True
+      inList (x,y) (robots env)  = emptyCellForKid (p1,p2) xs env
+    | otherwise = (x, y):emptyCellForKid (p1,p2) xs env
 
 emptyCellForRobot :: (Int, Int) -> ENV -> Bool -> Bool
 emptyCellForRobot pos env withChld

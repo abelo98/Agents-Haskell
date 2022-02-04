@@ -34,6 +34,7 @@ main2 t rows columns kids rbts obstcs dirty rbtType = do
 
 
 
+
 newEmptyEnv n m rbts = ENV n m [] [] [] [] [] (buildList rbts False) []
 
 buildList 0 _ = []

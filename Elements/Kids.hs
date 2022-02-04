@@ -3,7 +3,7 @@ module Elements.Kids(moveKids,carriedKids)
 where
 
 import Utils.Utils (getAdy, filterCells, randomNumbers, pickRandom, inList, remove, inMatriz,getDir, disjoin)
-import Environment.Environment (ENV, emptyCell, countKids, emptyCellToMess)
+import Environment.Environment (ENV, emptyCellForKid, countKids, emptyCellToMess)
 import System.Random (newStdGen, Random (randomR))
 
 import Elements.Obstacle (moveObstc)
@@ -22,7 +22,7 @@ selection (x:xs) n = x:selection xs (n-1)
 
 
 findMoves pos env =
-    let mov = filterCells emptyCell (getAdy pos env) env pos
+    let mov =  emptyCellForKid pos (getAdy pos env) env 
     in if null mov then [pos] else mov
 
 scanKids :: [(Int, Int)] -> ENV -> Int
@@ -62,10 +62,16 @@ simulateMoves (1:xs) (o:restKidsPos) gen env =
                 then
                 let newObstc = moveObstc dest (getDir dest o) (obstc env)
                     new_env = ENV (rows env) (columns env) new_kids newObstc new_dirt (playpen env) (robots env) (carryingKid env) (playpenTaken env)
-                in simulateMoves xs restKidsPos gen1 env
+                in simulateMoves xs restKidsPos gen1 new_env
                 else
                     let
                          new_env2 = ENV (rows env) (columns env) new_kids (obstc env) new_dirt (playpen env) (robots env) (carryingKid env) (playpenTaken env)
                     in simulateMoves xs restKidsPos gen1 new_env2
 
 
+testM = do 
+    g<-newStdGen 
+
+    let 
+        t = ENV {rows = 6, columns = 6, kids = [(2,2)], obstc = [(1,1),(1,2),(1,3),(2,1),(2,3),(3,1),(3,2),(3,3)], dirty = [], playpen = [(0,0)], robots = [], carryingKid = [], playpenTaken = []}
+        in print (simulateMoves [1] [(2,2)] g t)
