@@ -5,7 +5,7 @@ module Environment.Environment(
     generateEnv,
     emptyCellForKid,
     emptyCellForRobot,
-    countKids,generateEnv2,emptyCellToMess)
+    countKids,emptyCellToMess)
 
 where
 import Utils.Utils (getAdy,setElement, randomNumbers, inList, inMatriz, disjoin, allCells, pickRandom)
@@ -16,18 +16,7 @@ import Elements.Playpen(buildPlayPen)
 import Environment.Env ( ENV(..) )
 
 
-generateEnv rnds1 rnds2 n m kids playpen_size rbts obstcs drty carryingKids =
-    let start_x = head rnds1
-        start_y = head rnds2
-        env = ENV n m [] [] [] [] [] [] []
-        playpen = buildPlayPen (start_x,start_y) playpen_size env
-        chld = setElement kids rnds1 rnds2 playpen
-        rbt = setElement rbts rnds1 rnds2 (chld++playpen)
-        obstc = setElement obstcs rnds1 rnds2 (chld++rbt++playpen)
-        dirty = setElement drty rnds1 rnds2 (chld++rbt++playpen++obstc)
-        in ENV n m chld obstc dirty playpen rbt carryingKids []
-
-generateEnv2 n m kids playpen_size rbts obstcs drty carryingKids gen =
+generateEnv n m kids playpen_size rbts obstcs drty carryingKids gen =
     let (start_x,gen1) = randomR (0,n-1::Int) gen
         (start_y,gen2) = randomR (0,m-1::Int) gen1
         (_,gen3) = randomR (2,3::Int) gen1
