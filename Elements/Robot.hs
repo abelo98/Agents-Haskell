@@ -23,7 +23,7 @@ bfs [] pi visited env withChld objList = ([],(-1,-1))
 bfs (u:us) pi visited env withChld objList =
     if not(inList u objList)
         then
-            let adys_u = disjoin (getAdy u env) (visited++us) --adyacentes de u q no estan en la lista de ady por visitar ni los visitados
+            let adys_u = disjoin (getAdy u env) (visited++us)
                 free_ady_u = emptyCellForRobot adys_u env withChld
                 new_ady = us ++ free_ady_u
                 newPi = pi++updatePi u free_ady_u

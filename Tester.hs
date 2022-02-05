@@ -3,10 +3,10 @@ module Tester
 where
 import App (main)
 
-run :: Int -> [((Float, Int, Int), Int)] -> Int -> IO ()
-run _ results 4 = print results
-run 10 results agent =  run 0 results (agent+1)
-run envInd results agent =
+
+run _  4 = []
+run 10  agent = run 0 (agent+1)
+run envInd agent =
     let envs = [(6,6),(6,6),(10,14),(10,14),(13,12),(13,12),(12,12),(12,12),(14,9),(14,9)]
         rbts = [2,2,3,3,4,4,2,3,2,4]
         start_obst = [1,2,5,5,5,3,5,12,3,10]
@@ -16,19 +16,17 @@ run envInd results agent =
         noSim = 30
         
         r = uncurry (main (t!!envInd)) (envs!!envInd) (start_kids!!envInd) (rbts!!envInd) (start_obst!!envInd) (start_dirt!!envInd) agent [] 0 0 noSim
-        new_results=results++[(r,agent)]
-       in run (envInd + 1) new_results agent
+        in (r,agent):run (envInd + 1) agent
 
-runSingle _ results 4 = print results
-runSingle 1 results agent = runSingle 0 results (agent+1)
-runSingle envInd results agent =
-    let envs = [(4,4)]
+runSingle _ 4 = []
+runSingle 1 agent = runSingle 0  (agent+1)
+runSingle envInd agent =
+    let envs = [(5,5)]
         rbts = [1]
         start_obst = [1]
         start_kids = [1]
         start_dirt = [0]
         t = [2]
-        noSim = 1
+        noSim = 4
         r = uncurry (main (t!!envInd)) (envs!!envInd) (start_kids!!envInd) (rbts!!envInd) (start_obst!!envInd) (start_dirt!!envInd) agent [] 0 0 noSim
-        new_results=results++[(r,agent)]
-       in runSingle (envInd + 1) new_results agent
+       in (r,agent):runSingle (envInd + 1) agent
