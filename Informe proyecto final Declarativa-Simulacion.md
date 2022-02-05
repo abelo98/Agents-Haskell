@@ -1,3 +1,7 @@
+### Ejecución
+
+Para ejecutar el proyecto deberá ejecutar en una consola donde se encuentra el archivo $Tester.hs$ el comando $ghci$, luego ejecuta $:l \space Tester.hs$ y finalmente se llama a la función $run \space 0 \space 0 \space [] \space 0$
+
 ### Módulos
 
 #### ENV
@@ -157,7 +161,7 @@ Las funciones desarrolladas son:
 
 Este modulo alberga la función encargada de generar la suciedad tras el movimiento de un niño. La idea es que cuando un niño se mueve se analice la cuadricula de $3x3$ que tiene como centro su antigua posición. Luego nuestra función $generateDirt$ recibe los niños encontrados en la cuadricula, la lista con las posibles posiciones a ensuciar(celdas libres)  de la cuadricula de $3$x$3$ y dos generadores. Esto nos sirve para, según la cantidad de niños en la cuadricula, escoger aleatoriamente la cantidad que se va a ensuciar, atendiendo los limites establecidos en el proyecto, y cuales de dichas posibles celdas a ensuciar serán tomadas de forma aleatoria.
 
-Como se puede aprec
+
 
 #### Módulo Obstacle
 
@@ -196,7 +200,7 @@ $percent$ es una función para realizar el calculo del porcentual.
 
 $finalState$ es una función que determina si estamos en un estado final y por tanto se detiene la simulación. Los estados finales serían: que todos los niños estén en el corral y no haya suciedad o que se haya sobrepasado el $60\%$ de suciedad.
 
-$victOrLoss:$ Ssta es una función auxiliar que utilizamos para contar si dado un porrciento se obtuvo una victoeria ($1$ en el primer elemento de la tupla devuelta) o una derrota ($0$ en el segundo elemento de la tupla devuelta).
+$victOrLoss:$ Esta es una función auxiliar que utilizamos para contar si dado un porciento se obtuvo una victoria ($1$ en el primer elemento de la tupla devuelta) o una derrota ($0$ en el segundo elemento de la tupla devuelta).
 
 $mean$ nos permite calcular la media de los porcientos de limpieza de cada simulación.
 
@@ -221,3 +225,12 @@ Para poder conocer como se desenvuelven los agentes en diferentes ambientes se c
 En la función $startSimulation$ es donde se lleva a cabo toda la simulación de acciones tanto de los agentes, como de los niños y la variación aleatoria. Si nos encontramos en un esatdo final retornamos el porciento de suciedad que se tiene hasta el momento. Recordemos que los estados finales son cuando todos los niños están en el corral y no hay suciedad o cuando se sobrepasa el $60\%$ de suciedad en el ambiente. Si se completaron $100*t$ turnos entonces se detiene la simulación sin haber alcanzado un estado final, retornando el porciento de suciedad. Si se han completado $t$ turnos entonces toca realizar una variación aleatoria del ambiente. En nuestro caso esto representa que serán modificados todos los elementos del ambiente. En otras palabras se cambia la posición del corral, se redistribuye la suciedad, se sacan los niños que estén en el corral y se dan nuevas posiciones a ellos y a los sueltos también, se cambian los robots de posición y los obstáculos. Lo único que se mantiene igual es que si un robot está cargando un niño, lo seguirá cargando. De esta forma recreamos las peores condiciones en a las que se puede enfrentar un agente, pues todo cambia de lugar. Luego continuamos la simulación realizando un llamado recursivo.
 
 Si ninguna de las premisas anteriores se cumplen entonces se realizan los movimientos de los agentes y luego los cambios naturales del ambiente, que pueden ser que se muevan los niños y a su vez obstáculos y/o que aparezca suciedad. Cabe destacar que si falta solo una unidad de tiempo para que se realice la variación aleatoria entonces se hace un llamado recursivo sin aumentar la cantidad de turnos. Esto se hace con el objetivo de que en un mismo turno ocurra el cambio natural y luego la variación aleatoria. En caso de que no se este en el turno $t-1$ se hace un llamado aumentando la cantidad de turnos. Destacar que siempre, luego de un cambio natural o variación, se pasa el nuevo ambiente obtenido.
+
+
+
+#### Resultados obtenidos
+
+Para comprobar el desempeño de nuestros agentes se crearon $10$, algunos con las mismas dimensiones, con distintos parámetros de inicialización. Luego con cada uno de los tipos de agentes se realizan $30$ simulaciones con diferentes valores de $t$, que en los peores casos cunado $t=16$ se pueden llegar a los $1600$ turnos pues de no encontrarse en estados finales entonces se realizan $t*100$ turnos.
+
+Para llevar a cabo las pruebas tenemos el módulo $Tester$ y dentro una función llamada $run$ que ejecuta las simulaciones de los $4$ agentes. En esta función se encuentran las condiciones iniciales de $10$ entornos, así como los tipos de robots disponibles. 
+

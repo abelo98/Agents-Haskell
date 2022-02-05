@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 -- import System.Random(newStdGen)
-module App
+module App(main)
 where
 
 import System.Random (newStdGen)
@@ -14,8 +14,8 @@ import Environment.Environment (generateEnv)
 
 
 --En el main hay q chequear condiciones de factibilidad con obstc, ninos, basura y rbts
-main :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int ->[IO Float]->Int->Int->Int-> IO ()
-main _ _ _ _ _ _ _ _ allPercents vict loss 0 = print (unsafePerformIO(mean allPercents),vict,loss)
+main :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int ->[IO Float]->Int->Int->Int-> (Float,Int,Int)
+main _ _ _ _ _ _ _ _ allPercents vict loss 0 = (unsafePerformIO(mean allPercents),vict,loss)
 main t rows columns kids rbts obstcs dirty rbtType allPercents vict loss noSim = do
     let
         rbts_types = buildList rbts rbtType
@@ -57,7 +57,7 @@ startSimulation t counter globalCounter kids rbts obstcs dirt rbtType env
         -- print rbtType
         let
             moveAgents = makeMoves (robots env) rbtType 0 env
-            envAfterKidsMove = moveKids moveAgents gen 
+            envAfterKidsMove = moveKids moveAgents gen
             total_dirt = length (dirty envAfterKidsMove)
 
          in if t == counter+1

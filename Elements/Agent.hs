@@ -49,7 +49,7 @@ action pos 2 idx env
     | otherwise = env
 
 action pos 3 idx env
-    | unsafePerformIO(calculateDirtPercent env) > 30 = action pos 1 idx env
+    | unsafePerformIO(calculateDirtPercent env) > 30 = action pos 2 idx env
     | otherwise = action pos 0 idx env
 
 makeMoves [] _ _ env = env
